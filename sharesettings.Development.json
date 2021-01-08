@@ -1,0 +1,14 @@
+{
+  "csharp.unitTestDebuggingOptions": {
+    "env": {
+      "MyEnvVar": "Hello"
+    }
+  },
+
+  "ConnectionStrings": {
+    "SqlServer": "Server=(localdb)\\MSSQLLocalDB;Database=EFTools.demo.dev;Integrated Security=true;",
+    "Sqlite": "Data Source = #PATH#EFTools.demo.sqlite;",
+    "MySql": "Server=localhost;Database=EFTools.demo.dev;Uid=demo;Pwd=demo;",
+    "PostgreSql": "Host=localhost;Port=5432;Database=EFTools.demo.dev;User ID=demo;Password=demo;"
+  }
+}
