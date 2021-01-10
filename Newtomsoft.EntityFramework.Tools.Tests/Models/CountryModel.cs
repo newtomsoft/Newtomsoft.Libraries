@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Newtomsoft.EntityFramework.Tools.Demo.Repository.Models
+namespace Newtomsoft.EntityFramework.Tools.Tests.Models
 {
     [Table("Country")]
     public class CountryModel
@@ -8,5 +8,11 @@ namespace Newtomsoft.EntityFramework.Tools.Demo.Repository.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public bool IsDemocracy { get; set; }
+
+        public CountryModel(string name, bool isDemocracy)
+        {
+            Name = name;
+            IsDemocracy = isDemocracy;
+        }
     }
 }

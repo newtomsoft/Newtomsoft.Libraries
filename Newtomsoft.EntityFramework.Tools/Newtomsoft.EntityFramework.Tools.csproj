@@ -9,7 +9,7 @@
     <Copyright></Copyright>
     <Authors>Thomas Vuille</Authors>
     <Product>Newtomsoft Tools for .net &amp; EF</Product>
-    <Description>Tools for EF Code First
+    <Description>Tools for Entity Framework Code First
 Support InMemory ; SqlServer ; PosqtgreSql ; Sqlite ; MySql ;</Description>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>license.txt</PackageLicenseFile>

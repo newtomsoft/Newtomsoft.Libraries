@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtomsoft.EntityFramework.Tools.Tests.Models;
 
-namespace Newtomsoft.EntityFramework.Tools.Tests
+namespace Newtomsoft.EntityFramework.Tools.Tests.DbContexts
 {
-    public class DefaultDbContext : DbContext
+    public class BadProviderDbContext : DbContext
     {
         public DbSet<CountryModel> Countries { get; set; }
         public DbSet<CityModel> Cities { get; set; }
 
-
-        public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options)
+        public BadProviderDbContext(DbContextOptions<BadProviderDbContext> options) : base(options)
         {
             // Method intentionally left empty.
         }

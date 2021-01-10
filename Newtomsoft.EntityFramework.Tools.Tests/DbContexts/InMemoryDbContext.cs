@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Newtomsoft.EntityFramework.Tools.Demo.Repository.Models;
+using Newtomsoft.EntityFramework.Tools.Tests.Models;
 
-namespace Newtomsoft.EntityFramework.Tools.Demo.Repository
+namespace Newtomsoft.EntityFramework.Tools.Tests.DbContexts
 {
-    public class DefaultDbContext : DbContext
+    public class InMemoryDbContext : DbContext
     {
         public DbSet<CountryModel> Countries { get; set; }
         public DbSet<CityModel> Cities { get; set; }
 
-
-        public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options)
+        public InMemoryDbContext(DbContextOptions<InMemoryDbContext> options) : base(options)
         {
             // Method intentionally left empty.
         }

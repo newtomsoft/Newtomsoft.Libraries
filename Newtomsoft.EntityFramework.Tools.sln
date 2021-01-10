@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30709.132
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{D6F3E5B2-9780-4D40-873C-A5725B1E35BB}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "settings", "settings", "{137DA90C-D3F5-43FE-8765-1F71D2EDB8AF}"
 	ProjectSection(SolutionItems) = preProject
 		sharesettings.Development.json = sharesettings.Development.json
@@ -15,8 +13,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EntityFramework.Tools", "EntityFramework.Tools", "{72D863DF-361D-4736-B5DE-ED5EDAB85F1B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Newtomsoft.EntityFramework.Tools", "Newtomsoft.EntityFramework.Tools\Newtomsoft.EntityFramework.Tools.csproj", "{BAF1B35F-132B-4455-8418-13CE3DBFE021}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Newtomsoft.EntityFramework.Tools.Demo", "Newtomsoft.EntityFramework.Tools.Demo.Repository\Newtomsoft.EntityFramework.Tools.Demo.csproj", "{E59585CD-09CC-4DA0-9707-615D13C1A48D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Newtomsoft.EntityFramework.Tools.Tests", "Newtomsoft.EntityFramework.Tools.Tests\Newtomsoft.EntityFramework.Tools.Tests.csproj", "{AE3F89E8-3EC4-4829-AB47-91EE5A33E23B}"
 EndProject
@@ -30,10 +26,6 @@ Global
 		{BAF1B35F-132B-4455-8418-13CE3DBFE021}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAF1B35F-132B-4455-8418-13CE3DBFE021}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BAF1B35F-132B-4455-8418-13CE3DBFE021}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E59585CD-09CC-4DA0-9707-615D13C1A48D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E59585CD-09CC-4DA0-9707-615D13C1A48D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E59585CD-09CC-4DA0-9707-615D13C1A48D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E59585CD-09CC-4DA0-9707-615D13C1A48D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AE3F89E8-3EC4-4829-AB47-91EE5A33E23B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE3F89E8-3EC4-4829-AB47-91EE5A33E23B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE3F89E8-3EC4-4829-AB47-91EE5A33E23B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -44,7 +36,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BAF1B35F-132B-4455-8418-13CE3DBFE021} = {72D863DF-361D-4736-B5DE-ED5EDAB85F1B}
-		{E59585CD-09CC-4DA0-9707-615D13C1A48D} = {D6F3E5B2-9780-4D40-873C-A5725B1E35BB}
 		{AE3F89E8-3EC4-4829-AB47-91EE5A33E23B} = {5C3BF479-E763-442C-BF00-CA9328D8865D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Newtomsoft.EntityFramework.Tools": {
-      "commandName": "Project",
-      "commandLineArgs": "re"
-    }
-  }
-}

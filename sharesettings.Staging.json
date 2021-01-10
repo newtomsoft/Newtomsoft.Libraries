@@ -1,0 +1,7 @@
+{
+  "Repository": "Staging_SqlServer",
+
+  "ConnectionStrings": {
+    "Staging_SqlServer": "Server=(localdb)\\MSSQLLocalDB;Database=EFTools.demo.staging;Integrated Security=true;"
+  }
+}

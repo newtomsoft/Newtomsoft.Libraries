@@ -1,41 +1,63 @@
+using Newtomsoft.EntityFramework.Tools.Core;
+using Newtomsoft.EntityFramework.Tools.Exceptions;
+using Newtomsoft.EntityFramework.Tools.Tests.DbContexts;
+using Shouldly;
 using System;
 using Xunit;
-using Microsoft.Extensions.Configuration;
-using Shouldly;
-using Microsoft.Extensions.Hosting;
 
 namespace Newtomsoft.EntityFramework.Tools.Tests
 {
-    public class Startup
-    {
-        public void ConfigureHost(IHostBuilder hostBuilder)
-        {
-            var config = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .Build();
-
-            hostBuilder.ConfigureHostConfiguration(builder => builder.AddConfiguration(config));
-        }
-    }
-
-
     public class CreateDbContextShould
     {
-        public readonly IConfiguration _config;
-
-        public CreateDbContextShould(IConfiguration config)
+        [Fact]
+        public void CreateDbContextWhenRepositoryAndConnectionStringAreGoodInSettingsFile()
         {
-            _config = config;
+            Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development", EnvironmentVariableTarget.User);
+            var testDbContext = EntityFrameworkTools<GoodDbContext>.CreateDbContext();
+            testDbContext.ShouldNotBeNull();
+            testDbContext.Cities.ShouldNotBeNull();
+            testDbContext.Countries.ShouldNotBeNull();
         }
 
+        //[Fact]
+        //public void ThrowConnectionZZZZZZZZ()
+        //{
+        //    Environment.SetEnvironmentVariable(EntityFrameworkTools<GoodDbContext>.DOTNET_ENVIRONMENT, "uvygvzsedyvuzey", EnvironmentVariableTarget.User);
+        //    var env = Environment.GetEnvironmentVariable(EntityFrameworkTools<GoodDbContext>.DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
+        //    var envReturn = DebugClass.GetEnvironmentVariable();
+        //    env.ShouldBe(envReturn);
+        //}
 
         [Fact]
-        public void Test2()
+        public void OtherGoodEnvironment()
         {
-            Environment.SetEnvironmentVariable("REPOSITORY", "Sqlite");
-            Environment.SetEnvironmentVariable("MyEnvVar", "Dev");
-            var dbContext = EntityFrameworkTools<DefaultDbContext>.CreateDbContext();
-            Assert.NotNull(dbContext);
+            Environment.SetEnvironmentVariable(EntityFrameworkTools<GoodDbContext>.DOTNET_ENVIRONMENT_KEY, "Staging", EnvironmentVariableTarget.User);
+            var testDbContext = EntityFrameworkTools<GoodDbContext>.CreateDbContext();
+            testDbContext.ShouldNotBeNull();
+            testDbContext.Cities.ShouldNotBeNull();
+            testDbContext.Countries.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public void ThrowConnectionStringExceptionWhenEnvironmentIsBad()
+        {
+            Environment.SetEnvironmentVariable(EntityFrameworkTools<GoodDbContext>.DOTNET_ENVIRONMENT_KEY, "UnknownEnvironment!", EnvironmentVariableTarget.User);
+            var env = Environment.GetEnvironmentVariable(EntityFrameworkTools<GoodDbContext>.DOTNET_ENVIRONMENT_KEY, EnvironmentVariableTarget.User);
+            Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<GoodDbContext>.CreateDbContext());
+        }
+
+        [Fact]
+        public void ThrowRepositoryProviderExceptionWhenRepositoryAreBadInSettingsFile()
+        {
+            Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development", EnvironmentVariableTarget.User);
+            Should.Throw<RepositoryProviderException>(() => EntityFrameworkTools<BadProviderDbContext>.CreateDbContext());
+        }
+
+        [Fact]
+        public void ThrowConnectionStringException()
+        {
+            Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development", EnvironmentVariableTarget.User);
+            Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<NoConnectionStringForThisDbContext>.CreateDbContext());
         }
     }
 }

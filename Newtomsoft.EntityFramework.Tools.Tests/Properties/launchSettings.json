@@ -1,23 +1,14 @@
 {
   "profiles": {
-    "Development InMemory": {
+    "Development": {
       "commandName": "Project",
       "environmentVariables": {
-        "PERSISTENCE": "InMemory",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Development Sqlite": {
+    "Staging": {
       "commandName": "Project",
       "environmentVariables": {
-        "PERSISTENCE": "Sqlite",
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "Staging InMemory": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "PERSISTENCE": "InMemory",
         "ASPNETCORE_ENVIRONMENT": "Staging"
       }
     }
