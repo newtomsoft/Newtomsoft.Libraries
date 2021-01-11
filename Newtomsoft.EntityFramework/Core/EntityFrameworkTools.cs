@@ -132,7 +132,7 @@ namespace Newtomsoft.EntityFramework.Core
 
         private static string GetEnvironmentVariable(string EnvironmentName, string defaultEnvironmentValue)
         {
-            var environmentValue = System.Environment.GetEnvironmentVariable(EnvironmentName, EnvironmentVariableTarget.Machine);
+            var environmentValue = System.Environment.GetEnvironmentVariable(EnvironmentName, EnvironmentVariableTarget.User);
             if (string.IsNullOrEmpty(environmentValue))
             {
                 environmentValue = defaultEnvironmentValue;

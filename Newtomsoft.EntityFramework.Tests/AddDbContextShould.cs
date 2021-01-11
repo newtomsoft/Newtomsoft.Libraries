@@ -10,17 +10,16 @@ using Xunit;
 
 namespace Newtomsoft.EntityFramework.Tests
 {
-    public class AddDbContextShould
+    public class AddDbContextShould : IClassFixture<FixtureEnvironment>
     {
         private const string TestCountryName = "France";
         private ServiceCollection Services;
         private IConfigurationRoot Configuration;
 
         #region private methods
-
         private void CreateServices()
         {
-            Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development", EnvironmentVariableTarget.Machine);
+            Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development", EnvironmentVariableTarget.User);
             Configuration = GetConfiguration();
             Services = new ServiceCollection();
             Services.AddSingleton<IConfiguration>(Configuration);
