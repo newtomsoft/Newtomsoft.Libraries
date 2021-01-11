@@ -20,7 +20,7 @@ namespace Newtomsoft.EntityFramework.Tests
 
         private void CreateServices()
         {
-            Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development", EnvironmentVariableTarget.User);
+            Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development", EnvironmentVariableTarget.Machine);
             Configuration = GetConfiguration();
             Services = new ServiceCollection();
             Services.AddSingleton<IConfiguration>(Configuration);
@@ -67,6 +67,10 @@ namespace Newtomsoft.EntityFramework.Tests
             dbContext.Countries.ShouldNotBeNull();
         }
 
+        /// <summary>
+        /// To pass this test execute dotnet ef migrations add Init -c GoodDbContext --no-build
+        /// And dotnet ef database update -c GoodDbContext --no-build in console at tests directory
+        /// </summary>
         [Fact]
         public void GetDbContextWhenDataBaseExist()
         {
