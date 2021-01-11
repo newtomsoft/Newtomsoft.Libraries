@@ -15,6 +15,9 @@ Support InMemory ; SqlServer ; PosqtgreSql ; Sqlite ; MySql ;</Description>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
     <RootNamespace>Newtomsoft.EntityFramework</RootNamespace>
     <AssemblyName>Newtomsoft.EntityFramework</AssemblyName>
+    <PackageProjectUrl>https://github.com/newtomsoft/Newtomsoft.EntityFramework.Tools</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/newtomsoft/Newtomsoft.EntityFramework.Tools</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
