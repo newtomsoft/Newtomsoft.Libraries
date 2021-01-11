@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Company>newtomsoft</Company>
-    <Version>0.2.2</Version>
+    <Version>0.3.0</Version>
     <Copyright></Copyright>
     <Authors>Thomas Vuille</Authors>
     <Product>Newtomsoft Tools for .net &amp; EF</Product>
