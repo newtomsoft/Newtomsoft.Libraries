@@ -55,7 +55,6 @@ namespace Newtomsoft.EntityFramework.Tests
         [Fact]
         public void ThrowConnectionStringExceptionWhenEnvironmentIsBad()
         {
-            Thread.Sleep(8000);
             Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, UNKNOWN_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
             Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<GoodDbContext>.CreateDbContext());
         }
