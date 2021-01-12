@@ -41,8 +41,7 @@ namespace Newtomsoft.EntityFramework.Core
                     break;
 
                 case RepositoryProvider.MYSQL:
-                    services.AddDbContextPool<T>(options => options.UseMySql(configuration.GetConnectionString(repository), new MySqlServerVersion(new Version(8, 0, 21)), mySqlOptions => mySqlOptions.CharSetBehavior(CharSetBehavior.NeverAppend)));
-                    //services.AddDbContext<T>(options => options.UseMySql(configuration.GetConnectionString(repository), new MySqlServerVersion("8.0.22")), ServiceLifetime.Scoped);
+                    services.AddDbContextPool<T>(options => options.UseMySql(configuration.GetConnectionString(repository), CreateMySqlServerVersion(), mySqlOptions => mySqlOptions.CharSetBehavior(CharSetBehavior.NeverAppend)));
                     break;
 
                 case RepositoryProvider.POSTGRESQL:
@@ -72,7 +71,6 @@ namespace Newtomsoft.EntityFramework.Core
             UseDatabase(optionBuilder, provider, connectionString);
             return (T)Activator.CreateInstance(typeof(T), optionBuilder.Options);
         }
-
 
         #region Private methods
         private static IConfigurationRoot GetConfiguration(string runningEnvironment)
@@ -146,7 +144,7 @@ namespace Newtomsoft.EntityFramework.Core
 
         private static string GetEnvironmentVariable(string EnvironmentName, string defaultEnvironmentValue)
         {
-            var environmentValue = System.Environment.GetEnvironmentVariable(EnvironmentName, EnvironmentVariableTarget.User);
+            var environmentValue = Environment.GetEnvironmentVariable(EnvironmentName, EnvironmentVariableTarget.User);
             if (string.IsNullOrEmpty(environmentValue))
             {
                 environmentValue = defaultEnvironmentValue;
@@ -161,13 +159,12 @@ namespace Newtomsoft.EntityFramework.Core
 
         private static void UseDatabase(DbContextOptionsBuilder<T> optionBuilder, string provider, string connectionString)
         {
-            var mySqlVersion = new MySqlServerVersion(new Version(8, 0, 22));
             var useProviders = new Dictionary<string, Action<string>>
             {
                 { RepositoryProvider.SQLSERVER, connectionString => optionBuilder.UseSqlServer(connectionString) },
                 { RepositoryProvider.POSTGRESQL, connectionString => optionBuilder.UseNpgsql(connectionString) },
                 { RepositoryProvider.SQLITE, connectionString => optionBuilder.UseSqlite(connectionString) },
-                { RepositoryProvider.MYSQL, connectionString => optionBuilder.UseMySql(connectionString, mySqlVersion, mySqlOptions => mySqlOptions.CharSetBehavior(CharSetBehavior.NeverAppend)) },
+                { RepositoryProvider.MYSQL, connectionString => optionBuilder.UseMySql(connectionString, CreateMySqlServerVersion(), mySqlOptions => mySqlOptions.CharSetBehavior(CharSetBehavior.NeverAppend)) },
                 { RepositoryProvider.IN_MEMORY, connectionString => throw new ConnectionStringException($"You don't need to use Connection string in {RepositoryProvider.IN_MEMORY} mode") }
             };
             if (!useProviders.TryGetValue(provider, out var useProvider))
@@ -185,6 +182,8 @@ namespace Newtomsoft.EntityFramework.Core
         private static bool IsDotNetEFCommand() => Assembly.GetEntryAssembly().GetName().Name == "ef";
 
         private static string GetProvider(string repository) => repository.Split('_')[^1];
+
+        private static MySqlServerVersion CreateMySqlServerVersion() => new MySqlServerVersion(new Version(8, 0, 22));
         #endregion
     }
 }
