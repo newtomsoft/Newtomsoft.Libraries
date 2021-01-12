@@ -6,6 +6,7 @@ using Newtomsoft.EntityFramework.Constants;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace Newtomsoft.EntityFramework.Core
 {
@@ -17,7 +18,7 @@ namespace Newtomsoft.EntityFramework.Core
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configuration"></param>
-        public static void AddDbContext(IServiceCollection services, IConfigurationRoot configuration)
+        public static void AddDbContext(IServiceCollection services, IConfiguration configuration)
         {
             var dbContextName = typeof(T).Name;
             var repository = GetRepository(dbContextName, configuration);
@@ -54,47 +55,58 @@ namespace Newtomsoft.EntityFramework.Core
         /// <summary>
         /// Use in your IDesignTimeDbContextFactory implementation class
         /// </summary>
-        public static T CreateDbContext()
+        public static T CreateDbContext(string adminRepositoryKeyPrefix = "")
         {
             DbContextOptionsBuilder<T> optionBuilder = new DbContextOptionsBuilder<T>();
             var dbContextName = typeof(T).Name;
             string runningEnvironment = GetRunningEnvironment();
-            string currentPath = Directory.GetCurrentDirectory();
-            string parentPath = Path.Combine(currentPath, "..");
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(parentPath) // used by command dotnet ef for migrations management
-                .AddJsonFile($"sharesettings.{runningEnvironment}.json", optional: true)
-                .SetBasePath(currentPath) // used by running mode
-                .AddJsonFile($"appsettings.{runningEnvironment}.json", optional: true)
-                .AddJsonFile($"sharesettings.{runningEnvironment}.json", optional: true);
-            var configuration = builder.Build();
-            string repository = GetRepository(dbContextName, configuration);
+            var configuration = GetConfiguration(runningEnvironment);
+            string repository = GetRepository(dbContextName, configuration, adminRepositoryKeyPrefix);
             Console.WriteLine($"using is : {dbContextName} with {repository}");
-            string provider = GetProvider(repository);
-            string connectionString = GetConnectionString(configuration, repository, provider);
+            var provider = GetProvider(repository);
+            var connectionString = GetConnectionString(configuration, repository, provider);
+            if (string.IsNullOrEmpty(connectionString) && provider != RepositoryProvider.IN_MEMORY)
+                throw new ConnectionStringException("connectionString is dot define !");
             UseDatabase(optionBuilder, provider, connectionString);
             return (T)Activator.CreateInstance(typeof(T), optionBuilder.Options);
         }
 
+
         #region Private methods
+        private static IConfigurationRoot GetConfiguration(string runningEnvironment)
+        {
+            IConfigurationBuilder builder;
+            if (IsDotNetEFCommand())
+            {
+                builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetParent(Directory.GetCurrentDirectory()).FullName)
+                .AddJsonFile($"appsettings.{runningEnvironment}.json", optional: true)
+                .AddJsonFile($"sharesettings.{runningEnvironment}.json", optional: true);
+            }
+            else
+                builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile($"appsettings.{runningEnvironment}.json", optional: true)
+                .AddJsonFile($"sharesettings.{runningEnvironment}.json", optional: true);
+            return builder.Build();
+        }
+
         private static string GetConnectionString(IConfigurationRoot configuration, string repository, string provider)
         {
             string connectionString = configuration.GetConnectionString(repository);
-            if (string.IsNullOrEmpty(connectionString) && provider != RepositoryProvider.IN_MEMORY)
-                throw new ConnectionStringException("connectionString is dot define !");
             if (provider == RepositoryProvider.SQLITE)
                 connectionString = AddPathToSqliteConectionString(Directory.GetCurrentDirectory(), connectionString);
             Console.WriteLine($"connectionString is : {connectionString}");
             return connectionString;
         }
 
-        private static string GetRepository(string dbContextName, IConfigurationRoot configuration)
+        private static string GetRepository(string dbContextName, IConfiguration configuration, string repositoryKeyPrefix = "")
         {
             var repository = configuration.GetValue<string>(NewtomsoftEnvironment.REPOSITORY_KEY);
             if (string.IsNullOrEmpty(repository))
                 repository = configuration.GetValue($"{NewtomsoftEnvironment.REPOSITORY_KEY}:{dbContextName}", RepositoryProvider.SQLSERVER);
 
-            return repository;
+            return repositoryKeyPrefix + repository;
         }
 
         private static string GetRunningEnvironment()
@@ -166,6 +178,8 @@ namespace Newtomsoft.EntityFramework.Core
             string[] splitConnectionString = connectionString.Split("#PATH#");
             return splitConnectionString[0] + Path.Combine(path, splitConnectionString[1]);
         }
+
+        private static bool IsDotNetEFCommand() => Assembly.GetEntryAssembly().GetName().Name == "ef";
 
         private static string GetProvider(string repository) => repository.Split('_')[^1];
         #endregion

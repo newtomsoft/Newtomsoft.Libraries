@@ -4,6 +4,7 @@ using Newtomsoft.EntityFramework.Exceptions;
 using Newtomsoft.EntityFramework.Tests.DbContexts;
 using Shouldly;
 using System;
+using System.Threading;
 using Xunit;
 
 namespace Newtomsoft.EntityFramework.Tests
@@ -25,6 +26,16 @@ namespace Newtomsoft.EntityFramework.Tests
         }
 
         [Fact]
+        public void CreateDbContextWhenRepositoryAndConnectionStringWithAdminPrefixAreGoodInSettingsFile()
+        {
+            Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, DEVELOPMENT_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
+            var testDbContext = EntityFrameworkTools<GoodDbContext>.CreateDbContext("Admin_");
+            testDbContext.ShouldNotBeNull();
+            testDbContext.Cities.ShouldNotBeNull();
+            testDbContext.Countries.ShouldNotBeNull();
+        }
+
+        [Fact]
         public void ThrowConnectionStringExceptionWhenInMemory()
         {
             Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, DEVELOPMENT_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
@@ -32,7 +43,7 @@ namespace Newtomsoft.EntityFramework.Tests
         }
 
         [Fact]
-        public void OtherGoodEnvironment()
+        public void CreateDbContextWhenOtherGoodEnvironmentAndSettingsFileExist()
         {
             Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, STAGING_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
             var testDbContext = EntityFrameworkTools<GoodDbContext>.CreateDbContext();
@@ -44,6 +55,7 @@ namespace Newtomsoft.EntityFramework.Tests
         [Fact]
         public void ThrowConnectionStringExceptionWhenEnvironmentIsBad()
         {
+            Thread.Sleep(8000);
             Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, UNKNOWN_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
             Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<GoodDbContext>.CreateDbContext());
         }
