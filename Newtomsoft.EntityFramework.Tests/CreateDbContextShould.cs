@@ -4,7 +4,6 @@ using Newtomsoft.EntityFramework.Exceptions;
 using Newtomsoft.EntityFramework.Tests.DbContexts;
 using Shouldly;
 using System;
-using System.Threading;
 using Xunit;
 
 namespace Newtomsoft.EntityFramework.Tests
@@ -20,16 +19,6 @@ namespace Newtomsoft.EntityFramework.Tests
         {
             Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, DEVELOPMENT_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
             var testDbContext = EntityFrameworkTools<GoodDbContext>.CreateDbContext();
-            testDbContext.ShouldNotBeNull();
-            testDbContext.Cities.ShouldNotBeNull();
-            testDbContext.Countries.ShouldNotBeNull();
-        }
-
-        [Fact]
-        public void CreateDbContextWhenRepositoryAndConnectionStringWithAdminPrefixAreGoodInSettingsFile()
-        {
-            Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, DEVELOPMENT_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
-            var testDbContext = EntityFrameworkTools<GoodDbContext>.CreateDbContext("Admin_");
             testDbContext.ShouldNotBeNull();
             testDbContext.Cities.ShouldNotBeNull();
             testDbContext.Countries.ShouldNotBeNull();
@@ -71,6 +60,22 @@ namespace Newtomsoft.EntityFramework.Tests
         {
             Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, DEVELOPMENT_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
             Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<NoConnectionStringForThisDbContext>.CreateDbContext());
+        }
+
+        [Fact]
+        public void CreateDbContextWhenRepositoryAndConnectionStringWithAdminPrefixAreGoodInSettingsFile()
+        {
+            Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, DEVELOPMENT_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
+            var testDbContext = EntityFrameworkTools<GoodDbContext>.CreateDbContext("Admin_");
+            testDbContext.ShouldNotBeNull();
+            testDbContext.Cities.ShouldNotBeNull();
+            testDbContext.Countries.ShouldNotBeNull();
+        }
+        [Fact]
+        public void ThorwWhenRepositoryPrefixAreBadInSettingsFile()
+        {
+            Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, DEVELOPMENT_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
+            Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<GoodDbContext>.CreateDbContext("BadPrefix_"));
         }
     }
 }
