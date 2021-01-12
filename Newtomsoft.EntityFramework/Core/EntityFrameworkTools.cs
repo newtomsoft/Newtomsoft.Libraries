@@ -23,9 +23,7 @@ namespace Newtomsoft.EntityFramework.Core
         {
             var dbContextName = typeof(T).Name;
             var repository = GetRepository(dbContextName, configuration);
-            var provider = repository.Split('_')[^1];
-
-            switch (provider)
+            switch (GetProvider(repository))
             {
                 case RepositoryProvider.IN_MEMORY:
                     services.AddDbContext<T>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Scoped);
