@@ -58,7 +58,7 @@ namespace Newtomsoft.EntityFramework.Core
         {
             DbContextOptionsBuilder<T> optionBuilder = new DbContextOptionsBuilder<T>();
             var dbContextName = typeof(T).Name;
-            string runningEnvironment = GetRunningEnvironment();
+            string runningEnvironment = GetRunningEnvironementFromDbContextName(dbContextName) ?? GetRunningEnvironment();
             var configuration = GetConfiguration(runningEnvironment);
             string repository = GetRepository(dbContextName, configuration, adminRepositoryKeyPrefix);
             Console.WriteLine($"using is : {dbContextName} with {repository}");
@@ -180,6 +180,19 @@ namespace Newtomsoft.EntityFramework.Core
         private static bool IsDotNetEFCommand() => Assembly.GetEntryAssembly().GetName().Name == "ef";
 
         private static string GetProvider(string repository) => repository.Split('_')[^1];
+
+        private static string GetRunningEnvironementFromDbContextName(string dbContextName)
+        {
+            if (dbContextName[^1] != '_')
+            {
+                Console.WriteLine($"no environment evaluate by DbContext. Using current user environment variables");
+                return null;
+            }
+
+            string runningEnvironement = dbContextName.Split('_')[^2];
+            Console.WriteLine($"Environement evaluate by DbContext to {runningEnvironement}");
+            return runningEnvironement;
+        }
 
         private static MySqlServerVersion CreateMySqlServerVersion() => new MySqlServerVersion(new Version(8, 0, 22));
         #endregion
