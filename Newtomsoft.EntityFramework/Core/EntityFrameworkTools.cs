@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace Newtomsoft.EntityFramework.Core
 {
@@ -40,7 +41,8 @@ namespace Newtomsoft.EntityFramework.Core
                     break;
 
                 case RepositoryProvider.MYSQL:
-                    services.AddDbContext<T>(options => options.UseMySQL(configuration.GetConnectionString(repository)), ServiceLifetime.Scoped);
+                    services.AddDbContextPool<T>(options => options.UseMySql(configuration.GetConnectionString(repository), new MySqlServerVersion(new Version(8, 0, 21)), mySqlOptions => mySqlOptions.CharSetBehavior(CharSetBehavior.NeverAppend)));
+                    //services.AddDbContext<T>(options => options.UseMySql(configuration.GetConnectionString(repository), new MySqlServerVersion("8.0.22")), ServiceLifetime.Scoped);
                     break;
 
                 case RepositoryProvider.POSTGRESQL:
@@ -159,12 +161,13 @@ namespace Newtomsoft.EntityFramework.Core
 
         private static void UseDatabase(DbContextOptionsBuilder<T> optionBuilder, string provider, string connectionString)
         {
+            var mySqlVersion = new MySqlServerVersion(new Version(8, 0, 22));
             var useProviders = new Dictionary<string, Action<string>>
             {
                 { RepositoryProvider.SQLSERVER, connectionString => optionBuilder.UseSqlServer(connectionString) },
                 { RepositoryProvider.POSTGRESQL, connectionString => optionBuilder.UseNpgsql(connectionString) },
                 { RepositoryProvider.SQLITE, connectionString => optionBuilder.UseSqlite(connectionString) },
-                { RepositoryProvider.MYSQL, connectionString => optionBuilder.UseMySQL(connectionString) },
+                { RepositoryProvider.MYSQL, connectionString => optionBuilder.UseMySql(connectionString, mySqlVersion, mySqlOptions => mySqlOptions.CharSetBehavior(CharSetBehavior.NeverAppend)) },
                 { RepositoryProvider.IN_MEMORY, connectionString => throw new ConnectionStringException($"You don't need to use Connection string in {RepositoryProvider.IN_MEMORY} mode") }
             };
             if (!useProviders.TryGetValue(provider, out var useProvider))

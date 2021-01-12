@@ -71,11 +71,22 @@ namespace Newtomsoft.EntityFramework.Tests
             testDbContext.Cities.ShouldNotBeNull();
             testDbContext.Countries.ShouldNotBeNull();
         }
+
         [Fact]
-        public void ThorwWhenRepositoryPrefixAreBadInSettingsFile()
+        public void ThrowWhenRepositoryPrefixAreBadInSettingsFile()
         {
             Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, DEVELOPMENT_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
             Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<GoodDbContext>.CreateDbContext("BadPrefix_"));
+        }
+
+        [Fact]
+        public void CreateDbContextWhenGoodMySql()
+        {
+            Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, DEVELOPMENT_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
+            var testDbContext = EntityFrameworkTools<MySqlDbContext>.CreateDbContext();
+            testDbContext.ShouldNotBeNull();
+            testDbContext.Cities.ShouldNotBeNull();
+            testDbContext.Countries.ShouldNotBeNull();
         }
     }
 }
