@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtomsoft.EntityFramework.Exceptions;
 using Newtomsoft.EntityFramework.Constants;
+using Newtomsoft.EntityFramework.Exceptions;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace Newtomsoft.EntityFramework.Core
 {
