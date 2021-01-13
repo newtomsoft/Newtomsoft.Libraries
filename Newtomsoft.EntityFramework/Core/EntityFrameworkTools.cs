@@ -28,24 +28,19 @@ namespace Newtomsoft.EntityFramework.Core
                 case RepositoryProvider.IN_MEMORY:
                     services.AddDbContext<T>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Scoped);
                     break;
-
                 case RepositoryProvider.SQLITE:
                     var path = AddPathToSqliteConectionString(Path.Combine(Directory.GetCurrentDirectory()), configuration.GetConnectionString(repository));
                     services.AddDbContext<T>(options => options.UseSqlite(path));
                     break;
-
                 case RepositoryProvider.SQLSERVER:
                     services.AddDbContext<T>(options => options.UseSqlServer(configuration.GetConnectionString(repository)), ServiceLifetime.Scoped);
                     break;
-
                 case RepositoryProvider.MYSQL:
                     services.AddDbContextPool<T>(options => options.UseMySql(configuration.GetConnectionString(repository), CreateMySqlServerVersion(), mySqlOptions => mySqlOptions.CharSetBehavior(CharSetBehavior.NeverAppend)));
                     break;
-
                 case RepositoryProvider.POSTGRESQL:
                     services.AddDbContext<T>(options => options.UseNpgsql(configuration.GetConnectionString(repository)), ServiceLifetime.Scoped);
                     break;
-
                 default:
                     throw new ArgumentException("No DbContext defined !");
             }
@@ -54,11 +49,11 @@ namespace Newtomsoft.EntityFramework.Core
         /// <summary>
         /// Use in your IDesignTimeDbContextFactory implementation class
         /// </summary>
-        public static T CreateDbContext(string adminRepositoryKeyPrefix = "")
+        public static T CreateDbContext(string adminRepositoryKeyPrefix = "", string runningEnvironment ="")
         {
             DbContextOptionsBuilder<T> optionBuilder = new DbContextOptionsBuilder<T>();
             var dbContextName = typeof(T).Name;
-            string runningEnvironment = GetRunningEnvironementFromDbContextName(dbContextName) ?? GetRunningEnvironment();
+            runningEnvironment = GetRunningEnvironementFromDbContextName(dbContextName) ?? runningEnvironment;
             var configuration = GetConfiguration(runningEnvironment);
             string repository = GetRepository(dbContextName, configuration, adminRepositoryKeyPrefix);
             Console.WriteLine($"using is : {dbContextName} with {repository}");
@@ -73,19 +68,21 @@ namespace Newtomsoft.EntityFramework.Core
         #region Private methods
         private static IConfigurationRoot GetConfiguration(string runningEnvironment)
         {
+            runningEnvironment += ".";
+            if (runningEnvironment == ".") runningEnvironment = string.Empty;
             IConfigurationBuilder builder;
             if (IsDotNetEFCommand())
             {
                 builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetParent(Directory.GetCurrentDirectory()).FullName)
-                .AddJsonFile($"appsettings.{runningEnvironment}.json", optional: true)
-                .AddJsonFile($"sharesettings.{runningEnvironment}.json", optional: true);
+                .AddJsonFile($"appsettings.{runningEnvironment}json", optional: true)
+                .AddJsonFile($"sharesettings.{runningEnvironment}json", optional: true);
             }
             else
                 builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile($"appsettings.{runningEnvironment}.json", optional: true)
-                .AddJsonFile($"sharesettings.{runningEnvironment}.json", optional: true);
+                .AddJsonFile($"appsettings.{runningEnvironment}json", optional: true)
+                .AddJsonFile($"sharesettings.{runningEnvironment}json", optional: true);
             return builder.Build();
         }
 
@@ -100,45 +97,45 @@ namespace Newtomsoft.EntityFramework.Core
 
         private static string GetRepository(string dbContextName, IConfiguration configuration, string repositoryKeyPrefix = "")
         {
-            var repository = configuration.GetValue<string>(NewtomsoftEnvironment.REPOSITORY_KEY);
+            var repository = configuration.GetValue<string>(NewtomsoftConfiguration.REPOSITORY_KEY);
             if (string.IsNullOrEmpty(repository))
-                repository = configuration.GetValue($"{NewtomsoftEnvironment.REPOSITORY_KEY}:{dbContextName}", RepositoryProvider.SQLSERVER);
+                repository = configuration.GetValue($"{NewtomsoftConfiguration.REPOSITORY_KEY}:{dbContextName}", RepositoryProvider.SQLSERVER);
 
             return repositoryKeyPrefix + repository;
         }
 
-        private static string GetRunningEnvironment()
-        {
-            string aspdotnetEnvironment = GetEnvironmentVariable(NewtomsoftEnvironment.ASPNETCORE_ENVIRONMENT_KEY, string.Empty);
-            string dotnetEnvironment = GetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, string.Empty);
-            return GetRunningEnvironment(aspdotnetEnvironment, dotnetEnvironment);
-        }
+        //private static string GetRunningEnvironment()
+        //{
+        //    string aspdotnetEnvironment = GetEnvironmentVariable(NewtomsoftConfiguration.ASPNETCORE_ENVIRONMENT_KEY, string.Empty);
+        //    string dotnetEnvironment = GetEnvironmentVariable(NewtomsoftConfiguration.DOTNET_ENVIRONMENT_KEY, string.Empty);
+        //    return GetRunningEnvironment(aspdotnetEnvironment, dotnetEnvironment);
+        //}
 
-        private static string GetRunningEnvironment(string aspdotnetEnv, string dotnetEnv)
-        {
-            string env;
-            if (string.IsNullOrEmpty(dotnetEnv) && string.IsNullOrEmpty(aspdotnetEnv))
-            {
-                env = NewtomsoftEnvironment.DEVELOPMENT_RUNNING;
-                Console.WriteLine($"{NewtomsoftEnvironment.ASPNETCORE_ENVIRONMENT_KEY} and {NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY} are not defined Set to {env}");
-            }
-            else if (!string.IsNullOrEmpty(dotnetEnv) && !string.IsNullOrEmpty(aspdotnetEnv))
-            {
-                env = dotnetEnv;
-                Console.WriteLine($"{NewtomsoftEnvironment.ASPNETCORE_ENVIRONMENT_KEY} and {NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY} are twice defined. using {NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY} at {env}");
-            }
-            else if (!string.IsNullOrEmpty(dotnetEnv))
-            {
-                env = dotnetEnv;
-                Console.WriteLine($"{NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY} only is defined. Using it at {env}");
-            }
-            else
-            {
-                env = aspdotnetEnv;
-                Console.WriteLine($"{NewtomsoftEnvironment.ASPNETCORE_ENVIRONMENT_KEY} only is defined. Using it at {env}");
-            }
-            return env;
-        }
+        //private static string GetRunningEnvironment(string aspdotnetEnv, string dotnetEnv)
+        //{
+        //    string env;
+        //    if (string.IsNullOrEmpty(dotnetEnv) && string.IsNullOrEmpty(aspdotnetEnv))
+        //    {
+        //        env = NewtomsoftConfiguration.DEVELOPMENT_RUNNING;
+        //        Console.WriteLine($"{NewtomsoftConfiguration.ASPNETCORE_ENVIRONMENT_KEY} and {NewtomsoftConfiguration.DOTNET_ENVIRONMENT_KEY} are not defined Set to {env}");
+        //    }
+        //    else if (!string.IsNullOrEmpty(dotnetEnv) && !string.IsNullOrEmpty(aspdotnetEnv))
+        //    {
+        //        env = dotnetEnv;
+        //        Console.WriteLine($"{NewtomsoftConfiguration.ASPNETCORE_ENVIRONMENT_KEY} and {NewtomsoftConfiguration.DOTNET_ENVIRONMENT_KEY} are twice defined. using {NewtomsoftConfiguration.DOTNET_ENVIRONMENT_KEY} at {env}");
+        //    }
+        //    else if (!string.IsNullOrEmpty(dotnetEnv))
+        //    {
+        //        env = dotnetEnv;
+        //        Console.WriteLine($"{NewtomsoftConfiguration.DOTNET_ENVIRONMENT_KEY} only is defined. Using it at {env}");
+        //    }
+        //    else
+        //    {
+        //        env = aspdotnetEnv;
+        //        Console.WriteLine($"{NewtomsoftConfiguration.ASPNETCORE_ENVIRONMENT_KEY} only is defined. Using it at {env}");
+        //    }
+        //    return env;
+        //}
 
         private static string GetEnvironmentVariable(string EnvironmentName, string defaultEnvironmentValue)
         {

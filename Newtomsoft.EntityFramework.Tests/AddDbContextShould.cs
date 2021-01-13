@@ -6,6 +6,7 @@ using Newtomsoft.EntityFramework.Tests.Models;
 using Shouldly;
 using System;
 using System.Linq;
+using System.Threading;
 using Xunit;
 
 namespace Newtomsoft.EntityFramework.Tests
@@ -13,13 +14,15 @@ namespace Newtomsoft.EntityFramework.Tests
     public class AddDbContextShould : IClassFixture<FixtureEnvironment>
     {
         private const string TestCountryName = "France";
+        private const string ENVIRONMENT = "NewtomsoftEntityFrameworkTestEnvironment";
+        private const string DEVELOPMENT = "Development";
         private ServiceCollection Services;
         private IConfigurationRoot Configuration;
 
         #region private methods
         private void CreateServices()
         {
-            Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development", EnvironmentVariableTarget.User);
+            Environment.SetEnvironmentVariable(ENVIRONMENT, DEVELOPMENT, EnvironmentVariableTarget.User);
             Configuration = GetConfiguration();
             Services = new ServiceCollection();
             Services.AddSingleton<IConfiguration>(Configuration);

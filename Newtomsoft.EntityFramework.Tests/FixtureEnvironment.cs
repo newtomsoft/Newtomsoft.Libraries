@@ -1,19 +1,19 @@
-﻿using Newtomsoft.EntityFramework.Constants;
-using System;
+﻿using System;
 
 namespace Newtomsoft.EntityFramework.Tests
 {
     public class FixtureEnvironment : IDisposable
     {
-        public readonly string SaveEnvironment;
+        private const string ENVIRONMENT = "NewtomsoftEntityFrameworkTestEnvironment";
+        public readonly string EnvironmentSavedValue;
         public FixtureEnvironment()
         {
-            SaveEnvironment = Environment.GetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, EnvironmentVariableTarget.User);
+            EnvironmentSavedValue = Environment.GetEnvironmentVariable(ENVIRONMENT, EnvironmentVariableTarget.User);
         }
 
         public void Dispose()
         {
-            Environment.SetEnvironmentVariable(NewtomsoftEnvironment.DOTNET_ENVIRONMENT_KEY, SaveEnvironment, EnvironmentVariableTarget.User);
+            Environment.SetEnvironmentVariable(ENVIRONMENT, EnvironmentSavedValue, EnvironmentVariableTarget.User);
         }
     }
 }
