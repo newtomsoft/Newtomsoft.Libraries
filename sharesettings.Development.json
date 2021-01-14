@@ -1,7 +1,7 @@
 {
   "Repository": {
     "DefaultDbContext": "InMemory",
-    "GoodDbContext_Development_": "GoodDbContext_SqlServer",
+    "GoodDbContext_Development_": "GoodDbContext_Sqlite",
     "BadProviderDbContext": "Provider_SqlDontKnown",
     "NoConnectionStringForThisDbContext": "NotInConnectionStrings",
     "InMemoryDbContext": "InMemory",
@@ -12,6 +12,7 @@
     "GoodDbContext_SqlServer": "Server=(localdb)\\MSSQLLocalDB;Database=EFTools.demo.dev;Integrated Security=true;",
     "Admin_GoodDbContext_SqlServer": "Server=(localdb)\\MSSQLLocalDB;Database=EFTools.demo.dev;Integrated Security=true;",
     "GoodDbContext_Sqlite": "Data Source = #PATH#EFTools.demo.sqlite;",
+    "Admin_GoodDbContext_Sqlite": "Data Source = #PATH#EFTools.demo.sqlite;",
     "BadDbContext_SqlServer": "Server=localhost;Database=xxxx.dev;Uid=xxxx;Pwd=xxxxxx;",
     "Provider_SqlDontKnown": "*****",
     "MySql": "Server=fake;Port=3306;Database=EFTools.demo.dev;Uid=EFTools.demo.dev;Pwd=xxxxxx;"

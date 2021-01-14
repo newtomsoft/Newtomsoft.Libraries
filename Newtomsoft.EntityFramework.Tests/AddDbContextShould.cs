@@ -82,8 +82,7 @@ namespace Newtomsoft.EntityFramework.Tests
         }
 
         /// <summary>
-        /// To pass theses tests successfully execute dotnet ef migrations add Init -c GoodDbContext --no-build
-        /// And dotnet ef database update -c GoodDbContext --no-build in console at tests directory
+        /// To pass theses tests successfully please copy 
         /// </summary>
         [Fact]
         public void GetDbContextWithNoCityWhenDataBaseExistAndCitiesNoFilled()

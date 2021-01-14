@@ -59,8 +59,6 @@ namespace Newtomsoft.EntityFramework.Core
             Console.WriteLine($"using is : {dbContextName} with {repository}");
             var provider = GetProvider(repository);
             var connectionString = GetConnectionString(configuration, repository, provider);
-            if (string.IsNullOrEmpty(connectionString) && provider != RepositoryProvider.IN_MEMORY)
-                throw new ConnectionStringException("connectionString is dot define !");
             UseDatabase(optionBuilder, provider, connectionString);
             return (T)Activator.CreateInstance(typeof(T), optionBuilder.Options);
         }
@@ -89,6 +87,8 @@ namespace Newtomsoft.EntityFramework.Core
         private static string GetConnectionString(IConfigurationRoot configuration, string repository, string provider)
         {
             string connectionString = configuration.GetConnectionString(repository);
+            if (string.IsNullOrEmpty(connectionString) && provider != RepositoryProvider.IN_MEMORY)
+                throw new ConnectionStringException("connectionString is dot define !");
             if (provider == RepositoryProvider.SQLITE)
                 connectionString = AddPathToSqliteConectionString(Directory.GetCurrentDirectory(), connectionString);
             Console.WriteLine($"connectionString is : {connectionString}");
