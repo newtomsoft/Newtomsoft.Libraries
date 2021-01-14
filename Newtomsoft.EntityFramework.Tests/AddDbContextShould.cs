@@ -69,10 +69,6 @@ namespace Newtomsoft.EntityFramework.Tests
             dbContext.Countries.ShouldNotBeNull();
         }
 
-        /// <summary>
-        /// To pass theses tests successfully execute dotnet ef migrations add Init -c GoodDbContext --no-build
-        /// And dotnet ef database update -c GoodDbContext --no-build in console at tests directory
-        /// </summary>
         [Fact]
         public void GetDbContextWhenDataBaseExist()
         {
@@ -85,6 +81,10 @@ namespace Newtomsoft.EntityFramework.Tests
             dbContext.Countries.ShouldNotBeNull();
         }
 
+        /// <summary>
+        /// To pass theses tests successfully execute dotnet ef migrations add Init -c GoodDbContext --no-build
+        /// And dotnet ef database update -c GoodDbContext --no-build in console at tests directory
+        /// </summary>
         [Fact]
         public void GetDbContextWithNoCityWhenDataBaseExistAndCitiesNoFilled()
         {
