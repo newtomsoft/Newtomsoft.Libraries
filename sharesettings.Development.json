@@ -1,7 +1,7 @@
 {
   "Repository": {
     "DefaultDbContext": "InMemory",
-    "GoodDbContext_Development_": "GoodDbContext_Sqlite",
+    "GoodDbContext_Development": "GoodDbContext_Sqlite",
     "BadProviderDbContext": "Provider_SqlDontKnown",
     "NoConnectionStringForThisDbContext": "NotInConnectionStrings",
     "InMemoryDbContext": "InMemory",

@@ -4,13 +4,13 @@ using Newtomsoft.EntityFramework.Tests.DbContexts;
 
 namespace Newtomsoft.EntityFramework.Tests.DesignTimeDbContextFactory
 {
-    public class GoodDesignTimeDbContextFactoryDevelopment : IDesignTimeDbContextFactory<GoodDbContext_Development_>
+    public class GoodDesignTimeDbContextFactoryDevelopment : IDesignTimeDbContextFactory<GoodDbContext_Development>
     {
-        public GoodDbContext_Development_ CreateDbContext(string[] args) => EntityFrameworkTools<GoodDbContext_Development_>.CreateDbContext();
+        public GoodDbContext_Development CreateDbContext(string[] args) => EntityFrameworkTools<GoodDbContext_Development>.CreateDbContext();
     }
 
-    public class GoodDesignTimeDbContextFactoryStaging : IDesignTimeDbContextFactory<GoodDbContext_Staging_>
+    public class GoodDesignTimeDbContextFactoryStaging : IDesignTimeDbContextFactory<GoodDbContext_Staging>
     {
-        public GoodDbContext_Staging_ CreateDbContext(string[] args) => EntityFrameworkTools<GoodDbContext_Staging_>.CreateDbContext();
+        public GoodDbContext_Staging CreateDbContext(string[] args) => EntityFrameworkTools<GoodDbContext_Staging>.CreateDbContext();
     }
 }

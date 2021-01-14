@@ -7,7 +7,7 @@ using Newtomsoft.EntityFramework.Tests.DbContexts;
 
 namespace Newtomsoft.EntityFramework.Tests.Migrations
 {
-    [DbContext(typeof(GoodDbContext_Development_))]
+    [DbContext(typeof(GoodDbContext_Development))]
     partial class GoodDbContext_Development_ModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

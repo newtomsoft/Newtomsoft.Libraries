@@ -8,7 +8,7 @@ using Newtomsoft.EntityFramework.Tests.DbContexts;
 
 namespace Newtomsoft.EntityFramework.Tests.Migrations
 {
-    [DbContext(typeof(GoodDbContext_Development_))]
+    [DbContext(typeof(GoodDbContext_Development))]
     [Migration("20210114173552_Init")]
     partial class Init
     {
