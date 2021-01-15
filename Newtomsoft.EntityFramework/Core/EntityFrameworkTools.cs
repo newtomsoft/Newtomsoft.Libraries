@@ -49,7 +49,7 @@ namespace Newtomsoft.EntityFramework.Core
         /// <summary>
         /// Use in your IDesignTimeDbContextFactory implementation class
         /// </summary>
-        public static T CreateDbContext(string adminRepositoryKeyPrefix = "", string runningEnvironment ="")
+        public static T CreateDbContext(string adminRepositoryKeyPrefix = "", string runningEnvironment = "")
         {
             DbContextOptionsBuilder<T> optionBuilder = new DbContextOptionsBuilder<T>();
             var dbContextName = typeof(T).Name;
