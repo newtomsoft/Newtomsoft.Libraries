@@ -59,8 +59,6 @@ namespace Newtomsoft.EntityFramework.Core
             Console.WriteLine($"using is : {dbContextName} with {repository}");
             var provider = GetProvider(repository);
             var connectionString = GetConnectionString(configuration, repository, provider);
-            if (string.IsNullOrEmpty(connectionString) && provider != RepositoryProvider.IN_MEMORY)
-                throw new ConnectionStringException("connectionString is dot define !");
             UseDatabase(optionBuilder, provider, connectionString);
             return (T)Activator.CreateInstance(typeof(T), optionBuilder.Options);
         }
@@ -89,6 +87,8 @@ namespace Newtomsoft.EntityFramework.Core
         private static string GetConnectionString(IConfigurationRoot configuration, string repository, string provider)
         {
             string connectionString = configuration.GetConnectionString(repository);
+            if (string.IsNullOrEmpty(connectionString) && provider != RepositoryProvider.IN_MEMORY)
+                throw new ConnectionStringException("connectionString is dot define !");
             if (provider == RepositoryProvider.SQLITE)
                 connectionString = AddPathToSqliteConectionString(Directory.GetCurrentDirectory(), connectionString);
             Console.WriteLine($"connectionString is : {connectionString}");
@@ -103,40 +103,6 @@ namespace Newtomsoft.EntityFramework.Core
 
             return repositoryKeyPrefix + repository;
         }
-
-        //private static string GetRunningEnvironment()
-        //{
-        //    string aspdotnetEnvironment = GetEnvironmentVariable(NewtomsoftConfiguration.ASPNETCORE_ENVIRONMENT_KEY, string.Empty);
-        //    string dotnetEnvironment = GetEnvironmentVariable(NewtomsoftConfiguration.DOTNET_ENVIRONMENT_KEY, string.Empty);
-        //    return GetRunningEnvironment(aspdotnetEnvironment, dotnetEnvironment);
-        //}
-
-        //private static string GetRunningEnvironment(string aspdotnetEnv, string dotnetEnv)
-        //{
-        //    string env;
-        //    if (string.IsNullOrEmpty(dotnetEnv) && string.IsNullOrEmpty(aspdotnetEnv))
-        //    {
-        //        env = NewtomsoftConfiguration.DEVELOPMENT_RUNNING;
-        //        Console.WriteLine($"{NewtomsoftConfiguration.ASPNETCORE_ENVIRONMENT_KEY} and {NewtomsoftConfiguration.DOTNET_ENVIRONMENT_KEY} are not defined Set to {env}");
-        //    }
-        //    else if (!string.IsNullOrEmpty(dotnetEnv) && !string.IsNullOrEmpty(aspdotnetEnv))
-        //    {
-        //        env = dotnetEnv;
-        //        Console.WriteLine($"{NewtomsoftConfiguration.ASPNETCORE_ENVIRONMENT_KEY} and {NewtomsoftConfiguration.DOTNET_ENVIRONMENT_KEY} are twice defined. using {NewtomsoftConfiguration.DOTNET_ENVIRONMENT_KEY} at {env}");
-        //    }
-        //    else if (!string.IsNullOrEmpty(dotnetEnv))
-        //    {
-        //        env = dotnetEnv;
-        //        Console.WriteLine($"{NewtomsoftConfiguration.DOTNET_ENVIRONMENT_KEY} only is defined. Using it at {env}");
-        //    }
-        //    else
-        //    {
-        //        env = aspdotnetEnv;
-        //        Console.WriteLine($"{NewtomsoftConfiguration.ASPNETCORE_ENVIRONMENT_KEY} only is defined. Using it at {env}");
-        //    }
-        //    return env;
-        //}
-
         private static string GetEnvironmentVariable(string EnvironmentName, string defaultEnvironmentValue)
         {
             var environmentValue = Environment.GetEnvironmentVariable(EnvironmentName, EnvironmentVariableTarget.User);
@@ -186,7 +152,7 @@ namespace Newtomsoft.EntityFramework.Core
                 return null;
             }
 
-            string runningEnvironement = dbContextName.Split('_')[^2];
+            string runningEnvironement = dbContextName.Split('_')[^1];
             Console.WriteLine($"Environement evaluate by DbContext to {runningEnvironement}");
             return runningEnvironement;
         }

@@ -37,7 +37,7 @@ namespace Newtomsoft.EntityFramework.Tests
             return builder.Build();
         }
 
-        private static void AddContryToDatabase(GoodDbContext_Development_ dbContext)
+        private static void AddContryToDatabase(GoodDbContext_Development dbContext)
         {
             if (dbContext.Countries.Where(c => c.Name == TestCountryName).FirstOrDefault() == null)
             {
@@ -69,29 +69,28 @@ namespace Newtomsoft.EntityFramework.Tests
             dbContext.Countries.ShouldNotBeNull();
         }
 
-        /// <summary>
-        /// To pass theses tests successfully execute dotnet ef migrations add Init -c GoodDbContext --no-build
-        /// And dotnet ef database update -c GoodDbContext --no-build in console at tests directory
-        /// </summary>
         [Fact]
         public void GetDbContextWhenDataBaseExist()
         {
             CreateServices();
-            EntityFrameworkTools<GoodDbContext_Development_>.AddDbContext(Services, Configuration);
+            EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(Services, Configuration);
             var provider = Services.BuildServiceProvider();
-            var dbContext = provider.GetService<GoodDbContext_Development_>();
+            var dbContext = provider.GetService<GoodDbContext_Development>();
             dbContext.ShouldNotBeNull();
             dbContext.Cities.ShouldNotBeNull();
             dbContext.Countries.ShouldNotBeNull();
         }
 
+        /// <summary>
+        /// To pass theses tests successfully please copy 
+        /// </summary>
         [Fact]
         public void GetDbContextWithNoCityWhenDataBaseExistAndCitiesNoFilled()
         {
             CreateServices();
-            EntityFrameworkTools<GoodDbContext_Development_>.AddDbContext(Services, Configuration);
+            EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(Services, Configuration);
             var provider = Services.BuildServiceProvider();
-            var dbContext = provider.GetService<GoodDbContext_Development_>();
+            var dbContext = provider.GetService<GoodDbContext_Development>();
             dbContext.ShouldNotBeNull();
             dbContext.Cities.ShouldNotBeNull();
             dbContext.Cities.ToList().Count.ShouldBe(0);
@@ -101,9 +100,9 @@ namespace Newtomsoft.EntityFramework.Tests
         public void GetDbContextWith1ContryWhenDataBaseExistAnd1ContryAdd()
         {
             CreateServices();
-            EntityFrameworkTools<GoodDbContext_Development_>.AddDbContext(Services, Configuration);
+            EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(Services, Configuration);
             var provider = Services.BuildServiceProvider();
-            var dbContext = provider.GetService<GoodDbContext_Development_>();
+            var dbContext = provider.GetService<GoodDbContext_Development>();
             dbContext.ShouldNotBeNull();
             AddContryToDatabase(dbContext);
             dbContext.Countries.ShouldNotBeNull();
