@@ -36,7 +36,7 @@ namespace Newtomsoft.EntityFramework.Core
                     services.AddDbContext<T>(options => options.UseSqlServer(configuration.GetConnectionString(repository)), ServiceLifetime.Scoped);
                     break;
                 case RepositoryProvider.MYSQL:
-                    services.AddDbContextPool<T>(options => options.UseMySql(configuration.GetConnectionString(repository), CreateMySqlServerVersion(), mySqlOptions => mySqlOptions.CharSetBehavior(CharSetBehavior.NeverAppend)));
+                    services.AddDbContext<T>(options => options.UseMySql(configuration.GetConnectionString(repository), CreateMySqlServerVersion(), mySqlOptions => mySqlOptions.CharSetBehavior(CharSetBehavior.NeverAppend)));
                     break;
                 case RepositoryProvider.POSTGRESQL:
                     services.AddDbContext<T>(options => options.UseNpgsql(configuration.GetConnectionString(repository)), ServiceLifetime.Scoped);
@@ -54,6 +54,10 @@ namespace Newtomsoft.EntityFramework.Core
             DbContextOptionsBuilder<T> optionBuilder = new DbContextOptionsBuilder<T>();
             var dbContextName = typeof(T).Name;
             runningEnvironment = GetRunningEnvironementFromDbContextName(dbContextName) ?? runningEnvironment;
+            if (string.IsNullOrEmpty(runningEnvironment)) 
+                Console.WriteLine($"No runningEnvironment found. Using generic settings file.");
+            else
+                Console.WriteLine($"runningEnvironment is : {runningEnvironment}");
             var configuration = GetConfiguration(runningEnvironment);
             string repository = GetRepository(dbContextName, configuration, adminRepositoryKeyPrefix);
             Console.WriteLine($"using is : {dbContextName} with {repository}");
@@ -69,7 +73,7 @@ namespace Newtomsoft.EntityFramework.Core
             runningEnvironment += ".";
             if (runningEnvironment == ".") runningEnvironment = string.Empty;
             IConfigurationBuilder builder;
-            if (IsDotNetEFCommand())
+            if (IsDotNetEFCommandWitchCallProgram())
             {
                 builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetParent(Directory.GetCurrentDirectory()).FullName)
@@ -95,15 +99,15 @@ namespace Newtomsoft.EntityFramework.Core
             return connectionString;
         }
 
-        private static string GetRepository(string dbContextName, IConfiguration configuration, string repositoryKeyPrefix = "")
+        private static string GetRepository(string dbContextName, IConfiguration configuration, string adminRepositoryKeyPrefix = "")
         {
             var repository = configuration.GetValue<string>(NewtomsoftConfiguration.REPOSITORY_KEY);
             if (string.IsNullOrEmpty(repository))
                 repository = configuration.GetValue($"{NewtomsoftConfiguration.REPOSITORY_KEY}:{dbContextName}", RepositoryProvider.SQLSERVER);
 
-            return repositoryKeyPrefix + repository;
+            return adminRepositoryKeyPrefix + repository;
         }
-        private static string GetEnvironmentVariable(string EnvironmentName, string defaultEnvironmentValue)
+        public static string GetEnvironmentVariable(string EnvironmentName, string defaultEnvironmentValue)
         {
             var environmentValue = Environment.GetEnvironmentVariable(EnvironmentName, EnvironmentVariableTarget.User);
             if (string.IsNullOrEmpty(environmentValue))
@@ -140,19 +144,18 @@ namespace Newtomsoft.EntityFramework.Core
             return splitConnectionString[0] + Path.Combine(path, splitConnectionString[1]);
         }
 
-        private static bool IsDotNetEFCommand() => Assembly.GetEntryAssembly().GetName().Name == "ef";
+        private static bool IsDotNetEFCommandWitchCallProgram() => Assembly.GetEntryAssembly().GetName().Name == "ef";
 
         private static string GetProvider(string repository) => repository.Split('_')[^1];
 
         private static string GetRunningEnvironementFromDbContextName(string dbContextName)
         {
-            if (dbContextName[^1] != '_')
+            if (!dbContextName.EndsWith("Environment"))
             {
-                Console.WriteLine($"no environment evaluate by DbContext. Using current user environment variables");
+                Console.WriteLine($"no environment evaluate by DbContext");
                 return null;
             }
-
-            string runningEnvironement = dbContextName.Split('_')[^1];
+            string runningEnvironement = dbContextName.Split('_')[^1].Split("Environment")[0];
             Console.WriteLine($"Environement evaluate by DbContext to {runningEnvironement}");
             return runningEnvironement;
         }
