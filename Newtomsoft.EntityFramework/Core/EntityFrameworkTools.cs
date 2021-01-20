@@ -54,7 +54,7 @@ namespace Newtomsoft.EntityFramework.Core
             DbContextOptionsBuilder<T> optionBuilder = new DbContextOptionsBuilder<T>();
             var dbContextName = typeof(T).Name;
             runningEnvironment = GetRunningEnvironementFromDbContextName(dbContextName) ?? runningEnvironment;
-            if (string.IsNullOrEmpty(runningEnvironment)) 
+            if (string.IsNullOrEmpty(runningEnvironment))
                 Console.WriteLine($"No runningEnvironment found. Using generic settings file.");
             else
                 Console.WriteLine($"runningEnvironment is : {runningEnvironment}");
@@ -161,6 +161,8 @@ namespace Newtomsoft.EntityFramework.Core
         }
 
         private static MySqlServerVersion CreateMySqlServerVersion() => new MySqlServerVersion(new Version(8, 0, 22));
+
+
         #endregion
     }
 }
