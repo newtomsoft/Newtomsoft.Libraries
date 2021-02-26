@@ -51,7 +51,7 @@ namespace Newtomsoft.EntityFramework.Core
         /// </summary>
         public static T CreateDbContext(string adminRepositoryKeyPrefix = "", string runningEnvironment = "")
         {
-            DbContextOptionsBuilder<T> optionBuilder = new DbContextOptionsBuilder<T>();
+            var optionBuilder = new DbContextOptionsBuilder<T>();
             var dbContextName = typeof(T).Name;
             runningEnvironment = GetRunningEnvironementFromDbContextName(dbContextName) ?? runningEnvironment;
             if (string.IsNullOrEmpty(runningEnvironment))
@@ -160,8 +160,7 @@ namespace Newtomsoft.EntityFramework.Core
             return runningEnvironement;
         }
 
-        private static MySqlServerVersion CreateMySqlServerVersion() => new MySqlServerVersion(new Version(8, 0, 22));
-
+        private static MySqlServerVersion CreateMySqlServerVersion() => new(new Version(8, 0, 22));
 
         #endregion
     }
