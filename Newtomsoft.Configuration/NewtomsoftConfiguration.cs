@@ -6,20 +6,21 @@ namespace Newtomsoft.Configuration
 {
     public static class NewtomsoftConfiguration
     {
+        public const string DEFAULT_ENVIRONMENT_DEVELOPMENT_VALUE = "Development";
+
         public const string CONSOLE_OUTPUT = "Console";
         public const string JSONCONSOLE_OUTPUT = "JsonConsole";
         public const string DEBUG_OUTPUT = "Debug";
-        public const string DEFAULT_ENVIRONMENT_DEVELOPMENT_VALUE = "Development";
 
-        public static IConfigurationRoot GetConfiguration(string environement, string customConfigFileName = null)
+        public static IConfigurationRoot GetConfiguration(string environment, string customConfigFileName = null)
         {
-            if (string.IsNullOrEmpty(environement)) environement = DEFAULT_ENVIRONMENT_DEVELOPMENT_VALUE;
+            if (string.IsNullOrEmpty(environment)) environment = DEFAULT_ENVIRONMENT_DEVELOPMENT_VALUE;
 
             var builder = new ConfigurationBuilder()
-                        .AddJsonFile($"sharesettings.{environement}.json", optional: true)
-                        .AddJsonFile($"appsettings.{environement}.json", optional: true)
-                        .AddJsonFile("sharesettings.json", optional: true)
-                        .AddJsonFile("appsettings.json", optional: true);
+                .AddJsonFile($"sharesettings.{environment}.json", optional: true)
+                .AddJsonFile($"appsettings.{environment}.json", optional: true)
+                .AddJsonFile("sharesettings.json", optional: true)
+                .AddJsonFile("appsettings.json", optional: true);
 
             if (!string.IsNullOrEmpty(customConfigFileName))
                 builder.AddJsonFile(customConfigFileName, optional: false);

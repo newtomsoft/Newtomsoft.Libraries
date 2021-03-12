@@ -2,6 +2,6 @@
 {
     public class NewtomsoftConfiguration
     {
-        public const string REPOSITORY_KEY = "Repository";
+        public const string REPOSITORY_KEY = "Repositories";
     }
 }
