@@ -12,7 +12,7 @@ namespace Newtomsoft.Configuration
         public const string JSONCONSOLE_OUTPUT = "JsonConsole";
         public const string DEBUG_OUTPUT = "Debug";
 
-        public static IConfigurationRoot GetConfiguration(string environment, string customConfigFileName = null)
+        public static IConfigurationRoot GetConfiguration(string environment = null, string customConfigFileName = null)
         {
             if (string.IsNullOrEmpty(environment)) environment = DEFAULT_ENVIRONMENT_DEVELOPMENT_VALUE;
 
