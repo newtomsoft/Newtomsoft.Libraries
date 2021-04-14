@@ -21,15 +21,14 @@ namespace Newtomsoft.EntityFramework.Core
         /// <param name="configuration"></param>
         public static void AddDbContext(IServiceCollection services, IConfiguration configuration)
         {
-            var dbContextName = typeof(T).Name;
-            var repository = GetRepository(dbContextName, configuration);
+            string repository = GetRepositoryName<T>(configuration);
             switch (GetProvider(repository))
             {
                 case RepositoryProvider.IN_MEMORY:
                     services.AddDbContext<T>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Scoped);
                     break;
                 case RepositoryProvider.SQLITE:
-                    var path = AddPathToSqliteConectionString(Path.Combine(Directory.GetCurrentDirectory()), configuration.GetConnectionString(repository));
+                    string path = GetLocalSqlite(configuration, repository);
                     services.AddDbContext<T>(options => options.UseSqlite(path));
                     break;
                 case RepositoryProvider.SQLSERVER:
@@ -45,6 +44,16 @@ namespace Newtomsoft.EntityFramework.Core
                     throw new ArgumentException("No DbContext defined !");
             }
         }
+
+        public static string GetRepositoryName<TContext>(IConfiguration configuration)
+        {
+            var dbContextName = typeof(TContext).Name;
+            var repository = GetRepository(dbContextName, configuration);
+            return repository;
+        }
+
+        public static string GetLocalSqlite(IConfiguration configuration, string repository)
+            => AddPathToSqliteConectionString(Path.Combine(Directory.GetCurrentDirectory()), configuration.GetConnectionString(repository));
 
         /// <summary>
         /// Use in your IDesignTimeDbContextFactory implementation class
@@ -107,6 +116,7 @@ namespace Newtomsoft.EntityFramework.Core
 
             return adminRepositoryKeyPrefix + repository;
         }
+
         public static string GetEnvironmentVariable(string EnvironmentName, string defaultEnvironmentValue)
         {
             var environmentValue = Environment.GetEnvironmentVariable(EnvironmentName, EnvironmentVariableTarget.User);
