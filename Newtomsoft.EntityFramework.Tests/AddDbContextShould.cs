@@ -6,7 +6,6 @@ using Newtomsoft.EntityFramework.Tests.Models;
 using Shouldly;
 using System;
 using System.Linq;
-using System.Threading;
 using Xunit;
 
 namespace Newtomsoft.EntityFramework.Tests

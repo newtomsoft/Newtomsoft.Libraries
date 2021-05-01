@@ -1,9 +1,7 @@
-using Newtomsoft.EntityFramework.Constants;
 using Newtomsoft.EntityFramework.Core;
 using Newtomsoft.EntityFramework.Exceptions;
 using Newtomsoft.EntityFramework.Tests.DbContexts;
 using Shouldly;
-using System;
 using Xunit;
 
 namespace Newtomsoft.EntityFramework.Tests
@@ -12,7 +10,6 @@ namespace Newtomsoft.EntityFramework.Tests
     {
         private const string DEVELOPMENT_ENVIRONMENT = "Development";
         private const string STAGING_ENVIRONMENT = "Staging";
-        private const string UNKNOWN_DOTNET_ENVIRONMENT = "UnknownEnvironment!";
 
         [Fact]
         public void CreateDbContextWhenRepositoryAndConnectionStringAreGoodInSettingsFile()
