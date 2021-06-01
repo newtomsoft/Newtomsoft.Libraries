@@ -8,6 +8,6 @@ namespace Newtomsoft.EntityFramework.Tests.DbContexts
         public DbSet<CountryModel> Countries { get; set; }
         public DbSet<CityModel> Cities { get; set; }
 
-        public GoodDbContextBase(DbContextOptions options) : base(options) {}
+        public GoodDbContextBase(DbContextOptions options) : base(options) { }
     }
 }

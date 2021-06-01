@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Newtomsoft.EntityFramework.Tests.Models;
 
 namespace Newtomsoft.EntityFramework.Tests.DbContexts
 {
