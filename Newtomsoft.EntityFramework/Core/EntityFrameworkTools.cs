@@ -76,6 +76,21 @@ namespace Newtomsoft.EntityFramework.Core
             return (T)Activator.CreateInstance(typeof(T), optionBuilder.Options);
         }
 
+        public static string GetEnvironmentVariable(string EnvironmentName, string defaultEnvironmentValue)
+        {
+            var environmentValue = Environment.GetEnvironmentVariable(EnvironmentName, EnvironmentVariableTarget.User);
+            if (string.IsNullOrEmpty(environmentValue))
+            {
+                environmentValue = defaultEnvironmentValue;
+                Console.WriteLine($"'{EnvironmentName}' is not define. Define to {environmentValue}");
+            }
+            else
+            {
+                Console.WriteLine($"'{EnvironmentName}' is {environmentValue}");
+            }
+            return environmentValue;
+        }
+
         #region Private methods
         private static IConfigurationRoot GetConfiguration(string runningEnvironment)
         {
@@ -115,21 +130,6 @@ namespace Newtomsoft.EntityFramework.Core
                 repository = configuration.GetValue($"{NewtomsoftConfiguration.REPOSITORY_KEY}:{dbContextName}", RepositoryProvider.SQLSERVER);
 
             return adminRepositoryKeyPrefix + repository;
-        }
-
-        public static string GetEnvironmentVariable(string EnvironmentName, string defaultEnvironmentValue)
-        {
-            var environmentValue = Environment.GetEnvironmentVariable(EnvironmentName, EnvironmentVariableTarget.User);
-            if (string.IsNullOrEmpty(environmentValue))
-            {
-                environmentValue = defaultEnvironmentValue;
-                Console.WriteLine($"'{EnvironmentName}' is not define. Define to {environmentValue}");
-            }
-            else
-            {
-                Console.WriteLine($"'{EnvironmentName}' is {environmentValue}");
-            }
-            return environmentValue;
         }
 
         private static void UseDatabase(DbContextOptionsBuilder<T> optionBuilder, string provider, string connectionString)
