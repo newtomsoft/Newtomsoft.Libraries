@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtomsoft.EntityFramework.Constants;
 using Newtomsoft.EntityFramework.Exceptions;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,7 +34,7 @@ namespace Newtomsoft.EntityFramework.Core
                     services.AddDbContext<T>(options => options.UseSqlServer(configuration.GetConnectionString(repository)), ServiceLifetime.Scoped);
                     break;
                 case RepositoryProvider.MYSQL:
-                    services.AddDbContext<T>(options => options.UseMySql(configuration.GetConnectionString(repository), CreateMySqlServerVersion(), mySqlOptions => mySqlOptions.CharSetBehavior(CharSetBehavior.NeverAppend)));
+                    services.AddDbContext<T>(options => options.UseMySql(configuration.GetConnectionString(repository), CreateMySqlServerVersion()));
                     break;
                 case RepositoryProvider.POSTGRESQL:
                     services.AddDbContext<T>(options => options.UseNpgsql(configuration.GetConnectionString(repository)), ServiceLifetime.Scoped);
@@ -74,6 +73,21 @@ namespace Newtomsoft.EntityFramework.Core
             var connectionString = GetConnectionString(configuration, repository, provider);
             UseDatabase(optionBuilder, provider, connectionString);
             return (T)Activator.CreateInstance(typeof(T), optionBuilder.Options);
+        }
+
+        public static string GetEnvironmentVariable(string EnvironmentName, string defaultEnvironmentValue)
+        {
+            var environmentValue = Environment.GetEnvironmentVariable(EnvironmentName, EnvironmentVariableTarget.User);
+            if (string.IsNullOrEmpty(environmentValue))
+            {
+                environmentValue = defaultEnvironmentValue;
+                Console.WriteLine($"'{EnvironmentName}' is not define. Define to {environmentValue}");
+            }
+            else
+            {
+                Console.WriteLine($"'{EnvironmentName}' is {environmentValue}");
+            }
+            return environmentValue;
         }
 
         #region Private methods
@@ -117,21 +131,6 @@ namespace Newtomsoft.EntityFramework.Core
             return adminRepositoryKeyPrefix + repository;
         }
 
-        public static string GetEnvironmentVariable(string EnvironmentName, string defaultEnvironmentValue)
-        {
-            var environmentValue = Environment.GetEnvironmentVariable(EnvironmentName, EnvironmentVariableTarget.User);
-            if (string.IsNullOrEmpty(environmentValue))
-            {
-                environmentValue = defaultEnvironmentValue;
-                Console.WriteLine($"'{EnvironmentName}' is not define. Define to {environmentValue}");
-            }
-            else
-            {
-                Console.WriteLine($"'{EnvironmentName}' is {environmentValue}");
-            }
-            return environmentValue;
-        }
-
         private static void UseDatabase(DbContextOptionsBuilder<T> optionBuilder, string provider, string connectionString)
         {
             var useProviders = new Dictionary<string, Action<string>>
@@ -139,7 +138,7 @@ namespace Newtomsoft.EntityFramework.Core
                 { RepositoryProvider.SQLSERVER, connectionString => optionBuilder.UseSqlServer(connectionString) },
                 { RepositoryProvider.POSTGRESQL, connectionString => optionBuilder.UseNpgsql(connectionString) },
                 { RepositoryProvider.SQLITE, connectionString => optionBuilder.UseSqlite(connectionString) },
-                { RepositoryProvider.MYSQL, connectionString => optionBuilder.UseMySql(connectionString, CreateMySqlServerVersion(), mySqlOptions => mySqlOptions.CharSetBehavior(CharSetBehavior.NeverAppend)) },
+                { RepositoryProvider.MYSQL, connectionString => optionBuilder.UseMySql(connectionString, CreateMySqlServerVersion()) },
                 { RepositoryProvider.IN_MEMORY, connectionString => throw new ConnectionStringException($"You don't need to use Connection string in {RepositoryProvider.IN_MEMORY} mode") }
             };
             if (!useProviders.TryGetValue(provider, out var useProvider))
