@@ -2,6 +2,7 @@ using Newtomsoft.EntityFramework.Core;
 using Newtomsoft.EntityFramework.Exceptions;
 using Newtomsoft.EntityFramework.Tests.DbContexts;
 using Shouldly;
+using System.IO;
 using Xunit;
 
 namespace Newtomsoft.EntityFramework.Tests
@@ -29,7 +30,7 @@ namespace Newtomsoft.EntityFramework.Tests
         [Fact]
         public void CreateDbContextWhenOtherGoodEnvironmentAndSettingsFileExist()
         {
-            var testDbContext = EntityFrameworkTools<GoodDbContext_Development>.CreateDbContext("", STAGING_ENVIRONMENT);
+            var testDbContext = EntityFrameworkTools<GoodDbContext_Staging>.CreateDbContext("", STAGING_ENVIRONMENT);
             testDbContext.ShouldNotBeNull();
             testDbContext.Cities.ShouldNotBeNull();
             testDbContext.Countries.ShouldNotBeNull();
@@ -38,8 +39,7 @@ namespace Newtomsoft.EntityFramework.Tests
         [Fact]
         public void ThrowConnectionStringExceptionWhenEnvironmentIsBad()
         {
-            //Environment.SetEnvironmentVariable(NewtomsoftConfiguration.DOTNET_ENVIRONMENT_KEY, UNKNOWN_DOTNET_ENVIRONMENT, EnvironmentVariableTarget.User);
-            Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<GoodDbContextBase>.CreateDbContext("", "UnknowEnvironement"));
+            Should.Throw<FileNotFoundException>(() => EntityFrameworkTools<GoodDbContextBase>.CreateDbContext("", "UnknowEnvironement"));
         }
 
         [Fact]

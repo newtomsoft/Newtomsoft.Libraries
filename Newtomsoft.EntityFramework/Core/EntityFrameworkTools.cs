@@ -100,14 +100,14 @@ namespace Newtomsoft.EntityFramework.Core
             {
                 builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetParent(Directory.GetCurrentDirectory()).FullName)
-                .AddJsonFile($"appsettings.{runningEnvironment}json", optional: true)
-                .AddJsonFile($"sharesettings.{runningEnvironment}json", optional: true);
+                .AddJsonFile($"appsettings.json", optional: false)
+                .AddJsonFile($"appsettings.{runningEnvironment}json", optional: false);
             }
             else
                 builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile($"appsettings.{runningEnvironment}json", optional: true)
-                .AddJsonFile($"sharesettings.{runningEnvironment}json", optional: true);
+                .AddJsonFile($"appsettings.json", optional: false)
+                .AddJsonFile($"appsettings.{runningEnvironment}json", optional: false);
             return builder.Build();
         }
 
@@ -115,7 +115,7 @@ namespace Newtomsoft.EntityFramework.Core
         {
             string connectionString = configuration.GetConnectionString(repository);
             if (string.IsNullOrEmpty(connectionString) && provider != RepositoryProvider.IN_MEMORY)
-                throw new ConnectionStringException("connectionString is dot define !");
+                throw new ConnectionStringException("connectionString is not define !");
             if (provider == RepositoryProvider.SQLITE)
                 connectionString = AddPathToSqliteConectionString(Directory.GetCurrentDirectory(), connectionString);
             Console.WriteLine($"connectionString is : {connectionString}");

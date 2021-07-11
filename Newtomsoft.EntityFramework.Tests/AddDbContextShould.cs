@@ -30,7 +30,6 @@ namespace Newtomsoft.EntityFramework.Tests
         private static IConfigurationRoot GetConfiguration()
         {
             var builder = new ConfigurationBuilder()
-                        .AddJsonFile("sharesettings.Development.json", optional: true)
                         .AddJsonFile("appsettings.Development.json", optional: true);
 
             return builder.Build();

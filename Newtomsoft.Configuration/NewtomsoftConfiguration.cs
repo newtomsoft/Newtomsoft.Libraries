@@ -17,9 +17,7 @@ namespace Newtomsoft.Configuration
             if (string.IsNullOrEmpty(environment)) environment = DEFAULT_ENVIRONMENT_DEVELOPMENT_VALUE;
 
             var builder = new ConfigurationBuilder()
-                .AddJsonFile($"sharesettings.{environment}.json", optional: true)
                 .AddJsonFile($"appsettings.{environment}.json", optional: true)
-                .AddJsonFile("sharesettings.json", optional: true)
                 .AddJsonFile("appsettings.json", optional: true);
 
             if (!string.IsNullOrEmpty(customConfigFileName))
