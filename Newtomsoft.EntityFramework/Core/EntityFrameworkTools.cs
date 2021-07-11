@@ -59,6 +59,8 @@ namespace Newtomsoft.EntityFramework.Core
         /// </summary>
         public static T CreateDbContext(string adminRepositoryKeyPrefix = "", string runningEnvironment = "")
         {
+            if (string.IsNullOrEmpty(runningEnvironment)) runningEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
             var optionBuilder = new DbContextOptionsBuilder<T>();
             var dbContextName = typeof(T).Name;
             runningEnvironment = GetRunningEnvironementFromDbContextName(dbContextName) ?? runningEnvironment;
