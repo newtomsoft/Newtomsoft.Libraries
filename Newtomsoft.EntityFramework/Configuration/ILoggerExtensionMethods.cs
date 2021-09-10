@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Newtomsoft.Configuration
+namespace Newtomsoft.EntityFramework.Configuration
 {
     public static class ILoggerExtensionMethods
     {

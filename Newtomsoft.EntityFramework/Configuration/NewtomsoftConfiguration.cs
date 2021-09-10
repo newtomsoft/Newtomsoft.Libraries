@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Newtomsoft.Configuration
+namespace Newtomsoft.EntityFramework.Configuration
 {
     public static class NewtomsoftConfiguration
     {
