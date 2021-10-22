@@ -5,12 +5,12 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Company>newtomsoft</Company>
-    <Version>0.4.1</Version>
+    <Version>0.5.1</Version>
     <Copyright></Copyright>
     <Authors>Thomas Vuille</Authors>
     <Product>Newtomsoft Tools for .net &amp; EF</Product>
     <Description>Tools for Entity Framework Code First
-Support InMemory ; SqlServer ; PosqtgreSql ; Sqlite ; MySql ;</Description>
+Support InMemory ; SqlServer ; PosqtgreSql ; Sqlite ; MySql ; Oracle</Description>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
     <RootNamespace>Newtomsoft.EntityFramework</RootNamespace>
