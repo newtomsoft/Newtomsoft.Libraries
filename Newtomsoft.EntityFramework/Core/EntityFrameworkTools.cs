@@ -39,6 +39,9 @@ namespace Newtomsoft.EntityFramework.Core
                 case RepositoryProvider.POSTGRESQL:
                     services.AddDbContext<T>(options => options.UseNpgsql(configuration.GetConnectionString(repository)), ServiceLifetime.Scoped);
                     break;
+                case RepositoryProvider.ORACLE:
+                    services.AddDbContext<T>(options => options.UseOracle(configuration.GetConnectionString(repository)), ServiceLifetime.Scoped);
+                    break;
                 default:
                     throw new ArgumentException("No DbContext defined !");
             }
@@ -140,6 +143,7 @@ namespace Newtomsoft.EntityFramework.Core
                 { RepositoryProvider.SQLSERVER, connectionString => optionBuilder.UseSqlServer(connectionString) },
                 { RepositoryProvider.POSTGRESQL, connectionString => optionBuilder.UseNpgsql(connectionString) },
                 { RepositoryProvider.SQLITE, connectionString => optionBuilder.UseSqlite(connectionString) },
+                { RepositoryProvider.ORACLE, connectionString => optionBuilder.UseOracle(connectionString) },
                 { RepositoryProvider.MYSQL, connectionString => optionBuilder.UseMySql(connectionString, CreateMySqlServerVersion()) },
                 { RepositoryProvider.IN_MEMORY, connectionString => throw new ConnectionStringException($"You don't need to use Connection string in {RepositoryProvider.IN_MEMORY} mode") }
             };

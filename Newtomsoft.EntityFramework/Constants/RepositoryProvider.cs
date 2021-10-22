@@ -7,5 +7,6 @@
         public const string POSTGRESQL = "PostgreSql";
         public const string MYSQL = "MySql";
         public const string IN_MEMORY = "InMemory";
+        public const string ORACLE = "Oracle";
     }
 }
