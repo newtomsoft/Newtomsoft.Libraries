@@ -1,12 +1,12 @@
 ﻿namespace Newtomsoft.EntityFramework.Constants
 {
-    public static class RepositoryProvider
+    public enum RepositoryProvider
     {
-        public const string SQLITE = "Sqlite";
-        public const string SQLSERVER = "SqlServer";
-        public const string POSTGRESQL = "PostgreSql";
-        public const string MYSQL = "MySql";
-        public const string IN_MEMORY = "InMemory";
-        public const string ORACLE = "Oracle";
+        IN_MEMORY = 0,
+        SQLITE = 1,
+        SQLSERVER = 2,
+        POSTGRESQL = 3,
+        MYSQL = 4,
+        ORACLE = 5,
     }
 }
