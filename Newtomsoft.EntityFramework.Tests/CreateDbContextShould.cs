@@ -39,7 +39,7 @@ namespace Newtomsoft.EntityFramework.Tests
         [Fact]
         public void ThrowConnectionStringExceptionWhenEnvironmentIsBad()
         {
-            Should.Throw<FileNotFoundException>(() => EntityFrameworkTools<GoodDbContextBase>.CreateDbContext("", "UnknowEnvironement"));
+            Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<GoodDbContextBase>.CreateDbContext("", "UnknowEnvironement"));
         }
 
         [Fact]
@@ -49,9 +49,9 @@ namespace Newtomsoft.EntityFramework.Tests
         }
 
         [Fact]
-        public void ThrowConnectionStringException()
+        public void ThrowRepositoryProviderException()
         {
-            Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<NoConnectionStringForThisDbContext>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT));
+            Should.Throw<RepositoryProviderException>(() => EntityFrameworkTools<NoConnectionStringForThisDbContext>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT));
         }
 
         [Fact]

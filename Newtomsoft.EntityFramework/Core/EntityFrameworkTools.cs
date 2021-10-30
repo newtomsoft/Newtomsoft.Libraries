@@ -21,28 +21,29 @@ namespace Newtomsoft.EntityFramework.Core
         /// <param name="configuration"></param>
         public static void AddDbContext(IServiceCollection services, IConfiguration configuration)
         {
-            var repositoryString = GetRepositoryName<T>(configuration).ToUpperInvariant();
+            var repositoryStringWithPrefix = GetRepositoryName<T>(configuration);
+            var repositoryString = repositoryStringWithPrefix.Split('_')[^1].ToUpperInvariant();
             var repositoryProvider = GetRepositoryProvider(repositoryString);
             switch (repositoryProvider)
             {
-                case RepositoryProvider.IN_MEMORY:
+                case RepositoryProvider.INMEMORY:
                     services.AddDbContext<T>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Scoped);
                     break;
                 case RepositoryProvider.SQLITE:
-                    string path = GetLocalSqlite(configuration, repositoryString);
+                    string path = GetLocalSqlite(configuration, repositoryStringWithPrefix);
                     services.AddDbContext<T>(options => options.UseSqlite(path));
                     break;
                 case RepositoryProvider.SQLSERVER:
-                    services.AddDbContext<T>(options => options.UseSqlServer(configuration.GetConnectionString(repositoryString)), ServiceLifetime.Scoped);
+                    services.AddDbContext<T>(options => options.UseSqlServer(configuration.GetConnectionString(repositoryStringWithPrefix)), ServiceLifetime.Scoped);
                     break;
                 case RepositoryProvider.MYSQL:
-                    services.AddDbContext<T>(options => options.UseMySql(configuration.GetConnectionString(repositoryString), CreateMySqlServerVersion()));
+                    services.AddDbContext<T>(options => options.UseMySql(configuration.GetConnectionString(repositoryStringWithPrefix), CreateMySqlServerVersion()));
                     break;
                 case RepositoryProvider.POSTGRESQL:
-                    services.AddDbContext<T>(options => options.UseNpgsql(configuration.GetConnectionString(repositoryString)), ServiceLifetime.Scoped);
+                    services.AddDbContext<T>(options => options.UseNpgsql(configuration.GetConnectionString(repositoryStringWithPrefix)), ServiceLifetime.Scoped);
                     break;
                 case RepositoryProvider.ORACLE:
-                    services.AddDbContext<T>(options => options.UseOracle(configuration.GetConnectionString(repositoryString)), ServiceLifetime.Scoped);
+                    services.AddDbContext<T>(options => options.UseOracle(configuration.GetConnectionString(repositoryStringWithPrefix)), ServiceLifetime.Scoped);
                     break;
                 default:
                     throw new ArgumentException("No DbContext defined !");
@@ -81,8 +82,10 @@ namespace Newtomsoft.EntityFramework.Core
         private static RepositoryProvider GetRepositoryProvider(string provider)
         {
             var dict = Enum.GetValues(typeof(RepositoryProvider)).Cast<RepositoryProvider>().ToDictionary(t => t.ToString(), t => t);
-            if(!dict.TryGetValue(provider, out var repositoryProvider))
-                throw new RepositoryProviderException($"{provider} is not supported. Do you mean {NearestProvider(provider)} ?");
+            var availableProviders = dict.Select(element => element.Key).Aggregate((current, next) => $"{current}, {next}");
+
+            if (!dict.TryGetValue(provider, out var repositoryProvider))
+                throw new RepositoryProviderException($"{provider} is not supported. available providers are : {availableProviders}");
             return repositoryProvider;
         }
 
@@ -123,7 +126,7 @@ namespace Newtomsoft.EntityFramework.Core
         private static string GetConnectionString(IConfigurationRoot configuration, string repository, RepositoryProvider provider)
         {
             string connectionString = configuration.GetConnectionString(repository);
-            if (string.IsNullOrEmpty(connectionString) && provider != RepositoryProvider.IN_MEMORY)
+            if (string.IsNullOrEmpty(connectionString) && provider != RepositoryProvider.INMEMORY)
                 throw new ConnectionStringException("connectionString is not define !");
             if (provider == RepositoryProvider.SQLITE)
                 connectionString = AddPathToSqliteConectionString(Directory.GetCurrentDirectory(), connectionString);
@@ -145,7 +148,7 @@ namespace Newtomsoft.EntityFramework.Core
         {
             var useProviders = new Dictionary<RepositoryProvider, Action<string>>
             {
-                { RepositoryProvider.IN_MEMORY, connectionString => throw new ConnectionStringException($"You don't need to use Connection string in {RepositoryProvider.IN_MEMORY} mode") },
+                { RepositoryProvider.INMEMORY, connectionString => throw new ConnectionStringException($"You don't need to use Connection string in {RepositoryProvider.INMEMORY} mode") },
                 { RepositoryProvider.SQLITE, connectionString => optionBuilder.UseSqlite(connectionString) },
                 { RepositoryProvider.SQLSERVER, connectionString => optionBuilder.UseSqlServer(connectionString) },
                 { RepositoryProvider.POSTGRESQL, connectionString => optionBuilder.UseNpgsql(connectionString) },
@@ -153,11 +156,6 @@ namespace Newtomsoft.EntityFramework.Core
                 { RepositoryProvider.ORACLE, connectionString => optionBuilder.UseOracle(connectionString) },
             };
             useProviders[provider].Invoke(connectionString);
-        }
-
-        private static string NearestProvider(string provider)
-        {        
-            return "prout";
         }
 
         private static string AddPathToSqliteConectionString(string path, string connectionString)

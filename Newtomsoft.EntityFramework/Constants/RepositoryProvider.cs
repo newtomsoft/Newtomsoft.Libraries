@@ -2,7 +2,7 @@
 {
     public enum RepositoryProvider
     {
-        IN_MEMORY = 0,
+        INMEMORY = 0,
         SQLITE = 1,
         SQLSERVER = 2,
         POSTGRESQL = 3,
