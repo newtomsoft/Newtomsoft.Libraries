@@ -81,10 +81,10 @@ namespace Newtomsoft.EntityFramework.Core
 
         private static RepositoryProvider GetRepositoryProvider(string provider)
         {
-            var dict = Enum.GetValues(typeof(RepositoryProvider)).Cast<RepositoryProvider>().ToDictionary(t => t.ToString(), t => t);
-            var availableProviders = dict.Select(element => element.Key).Aggregate((current, next) => $"{current}, {next}");
+            var availableProvidersDic = Enum.GetValues(typeof(RepositoryProvider)).Cast<RepositoryProvider>().ToDictionary(t => t.ToString(), t => t);
+            var availableProviders = availableProvidersDic.Select(element => element.Key).Aggregate((current, next) => $"{current}, {next}");
 
-            if (!dict.TryGetValue(provider, out var repositoryProvider))
+            if (!availableProvidersDic.TryGetValue(provider, out var repositoryProvider))
                 throw new RepositoryProviderException($"{provider} is not supported. available providers are : {availableProviders}");
             return repositoryProvider;
         }
