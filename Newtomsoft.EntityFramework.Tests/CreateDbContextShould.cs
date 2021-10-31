@@ -97,6 +97,15 @@ namespace Newtomsoft.EntityFramework.Tests
         }
 
         [Fact]
+        public void CreateDbContextWhenGoodOracle()
+        {
+            var testDbContext = EntityFrameworkTools<OracleDbContext>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT);
+            testDbContext.ShouldNotBeNull();
+            testDbContext.Cities.ShouldNotBeNull();
+            testDbContext.Countries.ShouldNotBeNull();
+        }
+
+        [Fact]
         public void CreateDbContextWhenGoodMySqlInGenericSettingsFile()
         {
             var testDbContext = EntityFrameworkTools<MySqlDbContext>.CreateDbContext();
