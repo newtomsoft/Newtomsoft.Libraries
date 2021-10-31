@@ -79,6 +79,24 @@ namespace Newtomsoft.EntityFramework.Tests
         }
 
         [Fact]
+        public void CreateDbContextWhenGoodPostgres()
+        {
+            var testDbContext = EntityFrameworkTools<PostgresDbContext>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT);
+            testDbContext.ShouldNotBeNull();
+            testDbContext.Cities.ShouldNotBeNull();
+            testDbContext.Countries.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public void CreateDbContextWhenGoodSqlServer()
+        {
+            var testDbContext = EntityFrameworkTools<SqlServerDbContext>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT);
+            testDbContext.ShouldNotBeNull();
+            testDbContext.Cities.ShouldNotBeNull();
+            testDbContext.Countries.ShouldNotBeNull();
+        }
+
+        [Fact]
         public void CreateDbContextWhenGoodMySqlInGenericSettingsFile()
         {
             var testDbContext = EntityFrameworkTools<MySqlDbContext>.CreateDbContext();
