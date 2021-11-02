@@ -43,7 +43,7 @@ namespace Newtomsoft.EntityFramework.Core
                     services.AddDbContext<T>(options => options.UseNpgsql(configuration.GetConnectionString(repositoryStringWithPrefix)), ServiceLifetime.Scoped);
                     break;
                 case RepositoryProvider.ORACLE:
-                    services.AddDbContext<T>(options => options.UseOracle(configuration.GetConnectionString(repositoryStringWithPrefix)), ServiceLifetime.Scoped);
+                    services.AddDbContext<T>(options => options.UseOracle(configuration.GetConnectionString(repositoryStringWithPrefix)),  ServiceLifetime.Scoped);
                     break;
                 default:
                     throw new ArgumentException("No DbContext defined !");
@@ -180,7 +180,7 @@ namespace Newtomsoft.EntityFramework.Core
             return runningEnvironement;
         }
 
-        private static MySqlServerVersion CreateMySqlServerVersion() => new(new Version(8, 0, 22));
+        private static MySqlServerVersion CreateMySqlServerVersion() => new(new Version(8, 0, 27));
 
         #endregion
     }
