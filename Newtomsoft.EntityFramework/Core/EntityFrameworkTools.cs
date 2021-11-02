@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtomsoft.EntityFramework.Constants;
 using Newtomsoft.EntityFramework.Exceptions;
+using Oracle.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,13 +38,13 @@ namespace Newtomsoft.EntityFramework.Core
                     services.AddDbContext<T>(options => options.UseSqlServer(configuration.GetConnectionString(repositoryStringWithPrefix)), ServiceLifetime.Scoped);
                     break;
                 case RepositoryProvider.MYSQL:
-                    services.AddDbContext<T>(options => options.UseMySql(configuration.GetConnectionString(repositoryStringWithPrefix), CreateMySqlServerVersion()));
+                    services.AddDbContext<T>(options => options.UseMySql(configuration.GetConnectionString(repositoryStringWithPrefix), CreateMySqlServerVersion()), ServiceLifetime.Scoped);
                     break;
                 case RepositoryProvider.POSTGRESQL:
                     services.AddDbContext<T>(options => options.UseNpgsql(configuration.GetConnectionString(repositoryStringWithPrefix)), ServiceLifetime.Scoped);
                     break;
                 case RepositoryProvider.ORACLE:
-                    services.AddDbContext<T>(options => options.UseOracle(configuration.GetConnectionString(repositoryStringWithPrefix)),  ServiceLifetime.Scoped);
+                    services.AddDbContext<T>(options => options.UseOracle(configuration.GetConnectionString(repositoryStringWithPrefix), OracleVersion),  ServiceLifetime.Scoped);
                     break;
                 default:
                     throw new ArgumentException("No DbContext defined !");
@@ -153,7 +154,7 @@ namespace Newtomsoft.EntityFramework.Core
                 { RepositoryProvider.SQLSERVER, connectionString => optionBuilder.UseSqlServer(connectionString) },
                 { RepositoryProvider.POSTGRESQL, connectionString => optionBuilder.UseNpgsql(connectionString) },
                 { RepositoryProvider.MYSQL, connectionString => optionBuilder.UseMySql(connectionString, CreateMySqlServerVersion()) },
-                { RepositoryProvider.ORACLE, connectionString => optionBuilder.UseOracle(connectionString) },
+                { RepositoryProvider.ORACLE, connectionString => optionBuilder.UseOracle(connectionString, OracleVersion) },
             };
             useProviders[provider].Invoke(connectionString);
         }
@@ -181,6 +182,7 @@ namespace Newtomsoft.EntityFramework.Core
         }
 
         private static MySqlServerVersion CreateMySqlServerVersion() => new(new Version(8, 0, 27));
+        private static Action<OracleDbContextOptionsBuilder> OracleVersion => x => x.UseOracleSQLCompatibility("11");
 
         #endregion
     }
