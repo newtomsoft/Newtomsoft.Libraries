@@ -27,24 +27,24 @@ namespace Newtomsoft.EntityFramework.Core
             var repositoryProvider = GetRepositoryProvider(repositoryString);
             switch (repositoryProvider)
             {
-                case RepositoryProvider.INMEMORY:
-                    services.AddDbContext<T>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Scoped);
+                case RepositoryProvider.Inmemory:
+                    services.AddDbContext<T>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
                     break;
-                case RepositoryProvider.SQLITE:
+                case RepositoryProvider.Sqlite:
                     string path = GetLocalSqlite(configuration, repositoryStringWithPrefix);
                     services.AddDbContext<T>(options => options.UseSqlite(path));
                     break;
-                case RepositoryProvider.SQLSERVER:
-                    services.AddDbContext<T>(options => options.UseSqlServer(configuration.GetConnectionString(repositoryStringWithPrefix)), ServiceLifetime.Scoped);
+                case RepositoryProvider.SqlServer:
+                    services.AddDbContext<T>(options => options.UseSqlServer(configuration.GetConnectionString(repositoryStringWithPrefix)));
                     break;
-                case RepositoryProvider.MYSQL:
-                    services.AddDbContext<T>(options => options.UseMySql(configuration.GetConnectionString(repositoryStringWithPrefix), CreateMySqlServerVersion()), ServiceLifetime.Scoped);
+                case RepositoryProvider.MySql:
+                    services.AddDbContext<T>(options => options.UseMySql(configuration.GetConnectionString(repositoryStringWithPrefix), CreateMySqlServerVersion()));
                     break;
-                case RepositoryProvider.POSTGRESQL:
-                    services.AddDbContext<T>(options => options.UseNpgsql(configuration.GetConnectionString(repositoryStringWithPrefix)), ServiceLifetime.Scoped);
+                case RepositoryProvider.PostgreSql:
+                    services.AddDbContext<T>(options => options.UseNpgsql(configuration.GetConnectionString(repositoryStringWithPrefix)));
                     break;
-                case RepositoryProvider.ORACLE:
-                    services.AddDbContext<T>(options => options.UseOracle(configuration.GetConnectionString(repositoryStringWithPrefix), OracleVersion11), ServiceLifetime.Scoped);
+                case RepositoryProvider.Oracle:
+                    services.AddDbContext<T>(options => options.UseOracle(configuration.GetConnectionString(repositoryStringWithPrefix), OracleVersion11));
                     break;
                 default:
                     throw new ArgumentException("No DbContext defined !");
@@ -65,7 +65,7 @@ namespace Newtomsoft.EntityFramework.Core
 
             var optionBuilder = new DbContextOptionsBuilder<T>();
             var dbContextName = typeof(T).Name;
-            runningEnvironment = GetRunningEnvironementFromDbContextName(dbContextName) ?? runningEnvironment;
+            runningEnvironment = GetRunningEnvironmentFromDbContextName(dbContextName) ?? runningEnvironment;
             if (string.IsNullOrEmpty(runningEnvironment))
                 Console.WriteLine($"No runningEnvironment found. Using generic settings file.");
             else
@@ -82,7 +82,7 @@ namespace Newtomsoft.EntityFramework.Core
 
         private static RepositoryProvider GetRepositoryProvider(string provider)
         {
-            var availableProvidersDic = Enum.GetValues(typeof(RepositoryProvider)).Cast<RepositoryProvider>().ToDictionary(t => t.ToString(), t => t);
+            var availableProvidersDic = Enum.GetValues(typeof(RepositoryProvider)).Cast<RepositoryProvider>().ToDictionary(t => t.ToString().ToUpperInvariant(), t => t);
             var availableProviders = availableProvidersDic.Select(element => element.Key).Aggregate((current, next) => $"{current}, {next}");
 
             if (!availableProvidersDic.TryGetValue(provider, out var repositoryProvider))
@@ -90,17 +90,17 @@ namespace Newtomsoft.EntityFramework.Core
             return repositoryProvider;
         }
 
-        public static string GetEnvironmentVariable(string EnvironmentName, string defaultEnvironmentValue)
+        public static string GetEnvironmentVariable(string environmentName, string defaultEnvironmentValue)
         {
-            var environmentValue = Environment.GetEnvironmentVariable(EnvironmentName, EnvironmentVariableTarget.User);
+            var environmentValue = Environment.GetEnvironmentVariable(environmentName, EnvironmentVariableTarget.User);
             if (string.IsNullOrEmpty(environmentValue))
             {
                 environmentValue = defaultEnvironmentValue;
-                Console.WriteLine($"'{EnvironmentName}' is not define. Define to {environmentValue}");
+                Console.WriteLine($"'{environmentName}' is not define. Define to {environmentValue}");
             }
             else
             {
-                Console.WriteLine($"'{EnvironmentName}' is {environmentValue}");
+                Console.WriteLine($"'{environmentName}' is {environmentValue}");
             }
             return environmentValue;
         }
@@ -111,9 +111,9 @@ namespace Newtomsoft.EntityFramework.Core
             runningEnvironment += ".";
             if (runningEnvironment == ".") runningEnvironment = "InvalidEnvironment";
             IConfigurationBuilder builder;
-            if (IsDotNetEFCommandWitchCallProgram())
+            if (IsDotNetEfCommandWitchCallProgram())
                 builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetParent(Directory.GetCurrentDirectory()).FullName)
+                .SetBasePath(Directory.GetParent(Directory.GetCurrentDirectory())?.FullName)
                 .AddJsonFile($"appsettings.json", optional: false)
                 .AddJsonFile($"appsettings.{runningEnvironment}json", optional: true);
             else
@@ -127,9 +127,9 @@ namespace Newtomsoft.EntityFramework.Core
         private static string GetConnectionString(IConfigurationRoot configuration, string repository, RepositoryProvider provider)
         {
             string connectionString = configuration.GetConnectionString(repository);
-            if (string.IsNullOrEmpty(connectionString) && provider != RepositoryProvider.INMEMORY)
+            if (string.IsNullOrEmpty(connectionString) && provider != RepositoryProvider.Inmemory)
                 throw new ConnectionStringException("connectionString is not define !");
-            if (provider == RepositoryProvider.SQLITE)
+            if (provider == RepositoryProvider.Sqlite)
                 connectionString = AddPathToSqliteConectionString(Directory.GetCurrentDirectory(), connectionString);
             Console.WriteLine($"connectionString is : {connectionString}");
             return connectionString;
@@ -137,26 +137,26 @@ namespace Newtomsoft.EntityFramework.Core
 
         private static string GetRepository(string dbContextName, IConfiguration configuration, string adminRepositoryKeyPrefix = "")
         {
-            string defaultRepository = RepositoryProvider.SQLITE.ToString();
-            var repository = configuration.GetValue<string>(NewtomsoftConfiguration.REPOSITORY_KEY);
+            string defaultRepository = RepositoryProvider.Sqlite.ToString();
+            var repository = configuration.GetValue<string>(NewtomsoftConfiguration.RepositoryKey);
             if (string.IsNullOrEmpty(repository))
-                repository = configuration.GetValue($"{NewtomsoftConfiguration.REPOSITORY_KEY}:{dbContextName}", defaultRepository);
+                repository = configuration.GetValue($"{NewtomsoftConfiguration.RepositoryKey}:{dbContextName}", defaultRepository);
 
             return adminRepositoryKeyPrefix + repository;
         }
 
         private static void UseDatabase(DbContextOptionsBuilder<T> optionBuilder, RepositoryProvider provider, string connectionString)
         {
-            var useProviders = new Dictionary<RepositoryProvider, Action<string>>
+            var useProviders = new Dictionary<RepositoryProvider, Action>
             {
-                { RepositoryProvider.INMEMORY, connectionString => throw new ConnectionStringException($"You don't need to use Connection string in {RepositoryProvider.INMEMORY} mode") },
-                { RepositoryProvider.SQLITE, connectionString => optionBuilder.UseSqlite(connectionString) },
-                { RepositoryProvider.SQLSERVER, connectionString => optionBuilder.UseSqlServer(connectionString) },
-                { RepositoryProvider.POSTGRESQL, connectionString => optionBuilder.UseNpgsql(connectionString) },
-                { RepositoryProvider.MYSQL, connectionString => optionBuilder.UseMySql(connectionString, CreateMySqlServerVersion()) },
-                { RepositoryProvider.ORACLE, connectionString => optionBuilder.UseOracle(connectionString, OracleVersion11) },
+                { RepositoryProvider.Inmemory, () => throw new ConnectionStringException($"You don't need to use Connection string in {RepositoryProvider.Inmemory} mode") },
+                { RepositoryProvider.Sqlite, () => optionBuilder.UseSqlite(connectionString) },
+                { RepositoryProvider.SqlServer, () => optionBuilder.UseSqlServer(connectionString) },
+                { RepositoryProvider.PostgreSql, () => optionBuilder.UseNpgsql(connectionString) },
+                { RepositoryProvider.MySql, () => optionBuilder.UseMySql(connectionString, CreateMySqlServerVersion()) },
+                { RepositoryProvider.Oracle, () => optionBuilder.UseOracle(connectionString, OracleVersion11) },
             };
-            useProviders[provider].Invoke(connectionString);
+            useProviders[provider].Invoke();
         }
 
         private static string AddPathToSqliteConectionString(string path, string connectionString)
@@ -165,11 +165,11 @@ namespace Newtomsoft.EntityFramework.Core
             return splitConnectionString[0] + Path.Combine(path, splitConnectionString[1]);
         }
 
-        private static bool IsDotNetEFCommandWitchCallProgram() => Assembly.GetEntryAssembly().GetName().Name == "ef";
+        private static bool IsDotNetEfCommandWitchCallProgram() => Assembly.GetEntryAssembly()!.GetName().Name == "ef";
 
         private static string GetProvider(string repository) => repository.Split('_')[^1].ToUpperInvariant();
 
-        private static string GetRunningEnvironementFromDbContextName(string dbContextName)
+        private static string GetRunningEnvironmentFromDbContextName(string dbContextName)
         {
             if (!dbContextName.EndsWith("Environment"))
             {

@@ -2,15 +2,15 @@
 
 namespace Newtomsoft.EntityFramework.Configuration
 {
-    public static class ILoggerExtensionMethods
+    public static class LoggerExtensionMethods
     {
         public static ILoggingBuilder AddCustom(this ILoggingBuilder builder, string value)
         {
             return value switch
             {
-                NewtomsoftConfiguration.CONSOLE_OUTPUT => builder.AddConsole(),
-                NewtomsoftConfiguration.DEBUG_OUTPUT => builder.AddDebug(),
-                NewtomsoftConfiguration.JSONCONSOLE_OUTPUT => builder.AddJsonConsole(),
+                NewtomsoftConfiguration.ConsoleOutput => builder.AddConsole(),
+                NewtomsoftConfiguration.DebugOutput => builder.AddDebug(),
+                NewtomsoftConfiguration.JsonconsoleOutput => builder.AddJsonConsole(),
                 _ => builder,
             };
         }

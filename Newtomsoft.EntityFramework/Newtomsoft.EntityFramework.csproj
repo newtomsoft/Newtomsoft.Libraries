@@ -38,9 +38,9 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0-rc.2" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0" />
 		<PackageReference Include="Oracle.EntityFrameworkCore" Version="5.21.4" />
-		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.0-rc.1" />
+		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -6,15 +6,15 @@ namespace Newtomsoft.EntityFramework.Configuration
 {
     public static class NewtomsoftConfiguration
     {
-        public const string DEFAULT_ENVIRONMENT_DEVELOPMENT_VALUE = "Development";
+        private const string DefaultEnvironmentDevelopmentValue = "Development";
 
-        public const string CONSOLE_OUTPUT = "Console";
-        public const string JSONCONSOLE_OUTPUT = "JsonConsole";
-        public const string DEBUG_OUTPUT = "Debug";
+        public const string ConsoleOutput = "Console";
+        public const string JsonconsoleOutput = "JsonConsole";
+        public const string DebugOutput = "Debug";
 
         public static IConfigurationRoot GetConfiguration(string environment = null, string customConfigFileName = null)
         {
-            if (string.IsNullOrEmpty(environment)) environment = DEFAULT_ENVIRONMENT_DEVELOPMENT_VALUE;
+            if (string.IsNullOrEmpty(environment)) environment = DefaultEnvironmentDevelopmentValue;
 
             var builder = new ConfigurationBuilder()
                 .AddJsonFile($"appsettings.{environment}.json", optional: true)
