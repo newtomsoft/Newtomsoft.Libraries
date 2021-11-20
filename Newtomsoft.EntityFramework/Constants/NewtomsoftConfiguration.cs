@@ -1,7 +1,6 @@
-﻿namespace Newtomsoft.EntityFramework.Constants
+﻿namespace Newtomsoft.EntityFramework.Constants;
+
+public class NewtomsoftConfiguration
 {
-    public class NewtomsoftConfiguration
-    {
-        public const string REPOSITORY_KEY = "Repositories";
-    }
+    public const string REPOSITORY_KEY = "Repositories";
 }

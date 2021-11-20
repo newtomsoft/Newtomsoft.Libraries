@@ -1,11 +1,8 @@
-﻿using System;
+﻿namespace Newtomsoft.EntityFramework.Exceptions;
 
-namespace Newtomsoft.EntityFramework.Exceptions
+public class RepositoryProviderException : Exception
 {
-    public class RepositoryProviderException : Exception
+    public RepositoryProviderException(string message) : base(message)
     {
-        public RepositoryProviderException(string message) : base(message)
-        {
-        }
     }
 }
