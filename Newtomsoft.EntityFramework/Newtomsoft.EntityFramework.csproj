@@ -5,13 +5,11 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<Company>newtomsoft</Company>
-		<Version>0.6.0</Version>
+		<Version>6.0.1</Version>
 		<Copyright></Copyright>
 		<Authors>Thomas Vuille</Authors>
 		<Product>Newtomsoft Tools for .net &amp; EF</Product>
-		<Description>
-			Tools for Entity Framework Code First
-			Support InMemory ; SqlServer ; PosqtgreSql ; Sqlite ; MySql ; Oracle
+		<Description>Tools for Entity Framework Code First Support InMemory ; SqlServer ; PosqtgreSql ; Sqlite ; MySql ; Oracle
 		</Description>
 		<PackageLicenseExpression></PackageLicenseExpression>
 		<PackageLicenseFile>license.txt</PackageLicenseFile>
@@ -38,8 +36,8 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0" />
-		<PackageReference Include="Oracle.EntityFrameworkCore" Version="5.21.4" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.1" />
+		<PackageReference Include="Oracle.EntityFrameworkCore" Version="6.21.4" />
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.0" />
 	</ItemGroup>
 
