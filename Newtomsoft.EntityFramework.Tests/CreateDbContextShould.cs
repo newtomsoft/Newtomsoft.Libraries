@@ -2,20 +2,19 @@ using Newtomsoft.EntityFramework.Core;
 using Newtomsoft.EntityFramework.Exceptions;
 using Newtomsoft.EntityFramework.Tests.DbContexts;
 using Shouldly;
-using System.IO;
 using Xunit;
 
 namespace Newtomsoft.EntityFramework.Tests;
 
 public class CreateDbContextShould
 {
-    private const string DEVELOPMENT_ENVIRONMENT = "Development";
-    private const string STAGING_ENVIRONMENT = "Staging";
+    private const string DevelopmentEnvironment = "Development";
+    private const string StagingEnvironment = "Staging";
 
     [Fact]
     public void CreateDbContextWhenRepositoryAndConnectionStringAreGoodInSettingsFile()
     {
-        var testDbContext = EntityFrameworkTools<GoodDbContext_Development>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT);
+        var testDbContext = EntityFrameworkTools<GoodDbContext_Development>.CreateDbContext("", DevelopmentEnvironment);
         testDbContext.ShouldNotBeNull();
         testDbContext.Cities.ShouldNotBeNull();
         testDbContext.Countries.ShouldNotBeNull();
@@ -24,13 +23,13 @@ public class CreateDbContextShould
     [Fact]
     public void ThrowConnectionStringExceptionWhenInMemory()
     {
-        Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<InMemoryDbContext>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT));
+        Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<InMemoryDbContext>.CreateDbContext("", DevelopmentEnvironment));
     }
 
     [Fact]
     public void CreateDbContextWhenOtherGoodEnvironmentAndSettingsFileExist()
     {
-        var testDbContext = EntityFrameworkTools<GoodDbContext_Staging>.CreateDbContext("", STAGING_ENVIRONMENT);
+        var testDbContext = EntityFrameworkTools<GoodDbContext_Staging>.CreateDbContext("", StagingEnvironment);
         testDbContext.ShouldNotBeNull();
         testDbContext.Cities.ShouldNotBeNull();
         testDbContext.Countries.ShouldNotBeNull();
@@ -39,25 +38,25 @@ public class CreateDbContextShould
     [Fact]
     public void ThrowConnectionStringExceptionWhenEnvironmentIsBad()
     {
-        Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<GoodDbContextBase>.CreateDbContext("", "UnknowEnvironement"));
+        Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<GoodDbContextBase>.CreateDbContext("", "UnknownEnvironment"));
     }
 
     [Fact]
     public void ThrowRepositoryProviderExceptionWhenRepositoryAreBadInSettingsFile()
     {
-        Should.Throw<RepositoryProviderException>(() => EntityFrameworkTools<BadProviderDbContext>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT));
+        Should.Throw<RepositoryProviderException>(() => EntityFrameworkTools<BadProviderDbContext>.CreateDbContext("", DevelopmentEnvironment));
     }
 
     [Fact]
     public void ThrowRepositoryProviderException()
     {
-        Should.Throw<RepositoryProviderException>(() => EntityFrameworkTools<NoConnectionStringForThisDbContext>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT));
+        Should.Throw<RepositoryProviderException>(() => EntityFrameworkTools<NoConnectionStringForThisDbContext>.CreateDbContext("", DevelopmentEnvironment));
     }
 
     [Fact]
     public void CreateDbContextWhenRepositoryAndConnectionStringWithAdminPrefixAreGoodInSettingsFile()
     {
-        var testDbContext = EntityFrameworkTools<GoodDbContext_Development>.CreateDbContext("Admin_", DEVELOPMENT_ENVIRONMENT);
+        var testDbContext = EntityFrameworkTools<GoodDbContext_Development>.CreateDbContext("Admin_", DevelopmentEnvironment);
         testDbContext.ShouldNotBeNull();
         testDbContext.Cities.ShouldNotBeNull();
         testDbContext.Countries.ShouldNotBeNull();
@@ -66,13 +65,13 @@ public class CreateDbContextShould
     [Fact]
     public void ThrowWhenRepositoryPrefixAreBadInSettingsFile()
     {
-        Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<GoodDbContext_Development>.CreateDbContext("BadPrefix_", DEVELOPMENT_ENVIRONMENT));
+        Should.Throw<ConnectionStringException>(() => EntityFrameworkTools<GoodDbContext_Development>.CreateDbContext("BadPrefix_", DevelopmentEnvironment));
     }
 
     [Fact]
     public void CreateDbContextWhenGoodMySql()
     {
-        var testDbContext = EntityFrameworkTools<MySqlDbContext>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT);
+        var testDbContext = EntityFrameworkTools<MySqlDbContext>.CreateDbContext("", DevelopmentEnvironment);
         testDbContext.ShouldNotBeNull();
         testDbContext.Cities.ShouldNotBeNull();
         testDbContext.Countries.ShouldNotBeNull();
@@ -81,7 +80,7 @@ public class CreateDbContextShould
     [Fact]
     public void CreateDbContextWhenGoodPostgres()
     {
-        var testDbContext = EntityFrameworkTools<PostgresDbContext>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT);
+        var testDbContext = EntityFrameworkTools<PostgresDbContext>.CreateDbContext("", DevelopmentEnvironment);
         testDbContext.ShouldNotBeNull();
         testDbContext.Cities.ShouldNotBeNull();
         testDbContext.Countries.ShouldNotBeNull();
@@ -90,7 +89,7 @@ public class CreateDbContextShould
     [Fact]
     public void CreateDbContextWhenGoodSqlServer()
     {
-        var testDbContext = EntityFrameworkTools<SqlServerDbContext>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT);
+        var testDbContext = EntityFrameworkTools<SqlServerDbContext>.CreateDbContext("", DevelopmentEnvironment);
         testDbContext.ShouldNotBeNull();
         testDbContext.Cities.ShouldNotBeNull();
         testDbContext.Countries.ShouldNotBeNull();
@@ -99,7 +98,7 @@ public class CreateDbContextShould
     [Fact]
     public void CreateDbContextWhenGoodOracle()
     {
-        var testDbContext = EntityFrameworkTools<OracleDbContext>.CreateDbContext("", DEVELOPMENT_ENVIRONMENT);
+        var testDbContext = EntityFrameworkTools<OracleDbContext>.CreateDbContext("", DevelopmentEnvironment);
         testDbContext.ShouldNotBeNull();
         testDbContext.Cities.ShouldNotBeNull();
         testDbContext.Countries.ShouldNotBeNull();

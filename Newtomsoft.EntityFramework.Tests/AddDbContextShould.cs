@@ -35,13 +35,11 @@ public class AddDbContextShould : IClassFixture<FixtureEnvironment>
         return builder.Build();
     }
 
-    private static void AddContryToDatabase(GoodDbContext_Development dbContext)
+    private static void AddCountryToDatabase(GoodDbContextBase dbContext)
     {
-        if (dbContext.Countries.Where(c => c.Name == TestCountryName).FirstOrDefault() == null)
-        {
-            dbContext.Countries.Add(new CountryModel(TestCountryName, false));
-            dbContext.SaveChanges();
-        }
+        if (dbContext.Countries.FirstOrDefault(c => c.Name == TestCountryName) != null) return;
+        dbContext.Countries.Add(new CountryModel(TestCountryName, false));
+        dbContext.SaveChanges();
     }
     #endregion
 
@@ -102,7 +100,7 @@ public class AddDbContextShould : IClassFixture<FixtureEnvironment>
         var provider = _services.BuildServiceProvider();
         var dbContext = provider.GetService<GoodDbContext_Development>();
         dbContext.ShouldNotBeNull();
-        AddContryToDatabase(dbContext);
+        AddCountryToDatabase(dbContext);
         dbContext.Countries.ShouldNotBeNull();
         var countries = dbContext.Countries.ToList();
         countries.Count.ShouldBe(1);
