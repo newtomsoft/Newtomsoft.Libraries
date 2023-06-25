@@ -13,18 +13,18 @@ namespace Newtomsoft.EntityFramework.Tests
     public class AddDbContextShould : IClassFixture<FixtureEnvironment>
     {
         private const string TestCountryName = "France";
-        private const string ENVIRONMENT = "NewtomsoftEntityFrameworkTestEnvironment";
-        private const string DEVELOPMENT = "Development";
-        private ServiceCollection Services;
-        private IConfigurationRoot Configuration;
+        private const string Environment = "NewtomsoftEntityFrameworkTestEnvironment";
+        private const string Development = "Development";
+        private ServiceCollection _services;
+        private IConfigurationRoot _configuration;
 
         #region private methods
         private void CreateServices()
         {
-            Environment.SetEnvironmentVariable(ENVIRONMENT, DEVELOPMENT, EnvironmentVariableTarget.User);
-            Configuration = GetConfiguration();
-            Services = new ServiceCollection();
-            Services.AddSingleton<IConfiguration>(Configuration);
+            System.Environment.SetEnvironmentVariable(Environment, Development, EnvironmentVariableTarget.User);
+            _configuration = GetConfiguration();
+            _services = new ServiceCollection();
+            _services.AddSingleton<IConfiguration>(_configuration);
         }
 
         private static IConfigurationRoot GetConfiguration()
@@ -49,8 +49,8 @@ namespace Newtomsoft.EntityFramework.Tests
         public void DontGetDbContextWhenDataBaseDontExist()
         {
             CreateServices();
-            EntityFrameworkTools<InMemoryDbContext>.AddDbContext(Services, Configuration);
-            var provider = Services.BuildServiceProvider();
+            EntityFrameworkTools<InMemoryDbContext>.AddDbContext(_services, _configuration);
+            var provider = _services.BuildServiceProvider();
             var dbContext = provider.GetService<NoConnectionStringForThisDbContext>();
             dbContext.ShouldBeNull();
         }
@@ -59,8 +59,8 @@ namespace Newtomsoft.EntityFramework.Tests
         public void GetDbContextWhenInMemory()
         {
             CreateServices();
-            EntityFrameworkTools<InMemoryDbContext>.AddDbContext(Services, Configuration);
-            var provider = Services.BuildServiceProvider();
+            EntityFrameworkTools<InMemoryDbContext>.AddDbContext(_services, _configuration);
+            var provider = _services.BuildServiceProvider();
             var dbContext = provider.GetService<InMemoryDbContext>();
             dbContext.ShouldNotBeNull();
             dbContext.Cities.ShouldNotBeNull();
@@ -71,8 +71,8 @@ namespace Newtomsoft.EntityFramework.Tests
         public void GetDbContextWhenDataBaseExist()
         {
             CreateServices();
-            EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(Services, Configuration);
-            var provider = Services.BuildServiceProvider();
+            EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(_services, _configuration);
+            var provider = _services.BuildServiceProvider();
             var dbContext = provider.GetService<GoodDbContext_Development>();
             dbContext.ShouldNotBeNull();
             dbContext.Cities.ShouldNotBeNull();
@@ -86,8 +86,8 @@ namespace Newtomsoft.EntityFramework.Tests
         public void GetDbContextWithNoCityWhenDataBaseExistAndCitiesNoFilled()
         {
             CreateServices();
-            EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(Services, Configuration);
-            var provider = Services.BuildServiceProvider();
+            EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(_services, _configuration);
+            var provider = _services.BuildServiceProvider();
             var dbContext = provider.GetService<GoodDbContext_Development>();
             dbContext.ShouldNotBeNull();
             dbContext.Cities.ShouldNotBeNull();
@@ -95,11 +95,11 @@ namespace Newtomsoft.EntityFramework.Tests
         }
 
         [Fact]
-        public void GetDbContextWith1ContryWhenDataBaseExistAnd1ContryAdd()
+        public void GetDbContextWith1CountryWhenDataBaseExistAnd1CountryAdd()
         {
             CreateServices();
-            EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(Services, Configuration);
-            var provider = Services.BuildServiceProvider();
+            EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(_services, _configuration);
+            var provider = _services.BuildServiceProvider();
             var dbContext = provider.GetService<GoodDbContext_Development>();
             dbContext.ShouldNotBeNull();
             AddContryToDatabase(dbContext);

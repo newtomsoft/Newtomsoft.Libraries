@@ -31,7 +31,7 @@ namespace Newtomsoft.EntityFramework.Core
                     services.AddDbContext<T>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
                     break;
                 case RepositoryProvider.Sqlite:
-                    string path = GetLocalSqlite(configuration, repositoryStringWithPrefix);
+                    var path = GetLocalSqlite(configuration, repositoryStringWithPrefix);
                     services.AddDbContext<T>(options => options.UseSqlite(path));
                     break;
                 case RepositoryProvider.SqlServer:
@@ -51,10 +51,10 @@ namespace Newtomsoft.EntityFramework.Core
             }
         }
 
-        public static string GetRepositoryName<TContext>(IConfiguration configuration) => GetRepository(typeof(TContext).Name, configuration);
+        private static string GetRepositoryName<TContext>(IConfiguration configuration) => GetRepository(typeof(TContext).Name, configuration);
 
-        public static string GetLocalSqlite(IConfiguration configuration, string repository)
-            => AddPathToSqliteConectionString(Path.Combine(Directory.GetCurrentDirectory()), configuration.GetConnectionString(repository));
+        private static string GetLocalSqlite(IConfiguration configuration, string repository)
+            => AddPathToSqliteConnectionString(Path.Combine(Directory.GetCurrentDirectory()), configuration.GetConnectionString(repository));
 
         /// <summary>
         /// Use in your IDesignTimeDbContextFactory implementation class
@@ -66,12 +66,11 @@ namespace Newtomsoft.EntityFramework.Core
             var optionBuilder = new DbContextOptionsBuilder<T>();
             var dbContextName = typeof(T).Name;
             runningEnvironment = GetRunningEnvironmentFromDbContextName(dbContextName) ?? runningEnvironment;
-            if (string.IsNullOrEmpty(runningEnvironment))
-                Console.WriteLine($"No runningEnvironment found. Using generic settings file.");
-            else
-                Console.WriteLine($"runningEnvironment is : {runningEnvironment}");
+            Console.WriteLine(string.IsNullOrEmpty(runningEnvironment)
+                ? $"No runningEnvironment found. Using generic settings file."
+                : $"runningEnvironment is : {runningEnvironment}");
             var configuration = GetConfiguration(runningEnvironment);
-            string repository = GetRepository(dbContextName, configuration, adminRepositoryKeyPrefix);
+            var repository = GetRepository(dbContextName, configuration, adminRepositoryKeyPrefix);
             Console.WriteLine($"using is : {dbContextName} with {repository}");
             var providerString = GetProvider(repository);
             var repositoryProvider = GetRepositoryProvider(providerString);
@@ -126,18 +125,18 @@ namespace Newtomsoft.EntityFramework.Core
 
         private static string GetConnectionString(IConfigurationRoot configuration, string repository, RepositoryProvider provider)
         {
-            string connectionString = configuration.GetConnectionString(repository);
+            var connectionString = configuration.GetConnectionString(repository);
             if (string.IsNullOrEmpty(connectionString) && provider != RepositoryProvider.Inmemory)
                 throw new ConnectionStringException("connectionString is not define !");
             if (provider == RepositoryProvider.Sqlite)
-                connectionString = AddPathToSqliteConectionString(Directory.GetCurrentDirectory(), connectionString);
+                connectionString = AddPathToSqliteConnectionString(Directory.GetCurrentDirectory(), connectionString);
             Console.WriteLine($"connectionString is : {connectionString}");
             return connectionString;
         }
 
         private static string GetRepository(string dbContextName, IConfiguration configuration, string adminRepositoryKeyPrefix = "")
         {
-            string defaultRepository = RepositoryProvider.Sqlite.ToString();
+            var defaultRepository = RepositoryProvider.Sqlite.ToString();
             var repository = configuration.GetValue<string>(NewtomsoftConfiguration.RepositoryKey);
             if (string.IsNullOrEmpty(repository))
                 repository = configuration.GetValue($"{NewtomsoftConfiguration.RepositoryKey}:{dbContextName}", defaultRepository);
@@ -159,9 +158,9 @@ namespace Newtomsoft.EntityFramework.Core
             useProviders[provider].Invoke();
         }
 
-        private static string AddPathToSqliteConectionString(string path, string connectionString)
+        private static string AddPathToSqliteConnectionString(string path, string connectionString)
         {
-            string[] splitConnectionString = connectionString.Split("#PATH#");
+            var splitConnectionString = connectionString.Split("#PATH#");
             return splitConnectionString[0] + Path.Combine(path, splitConnectionString[1]);
         }
 
@@ -176,9 +175,9 @@ namespace Newtomsoft.EntityFramework.Core
                 Console.WriteLine($"no environment evaluate by DbContext");
                 return null;
             }
-            string runningEnvironement = dbContextName.Split('_')[^1].Split("Environment")[0];
-            Console.WriteLine($"Environement evaluate by DbContext to {runningEnvironement}");
-            return runningEnvironement;
+            var runningEnvironment = dbContextName.Split('_')[^1].Split("Environment")[0];
+            Console.WriteLine($"Environment evaluate by DbContext to {runningEnvironment}");
+            return runningEnvironment;
         }
 
         private static MySqlServerVersion CreateMySqlServerVersion() => new(new Version(8, 0, 22));
