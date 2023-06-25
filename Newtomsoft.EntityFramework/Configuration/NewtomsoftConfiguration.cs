@@ -2,34 +2,33 @@
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Newtomsoft.EntityFramework.Configuration
+namespace Newtomsoft.EntityFramework.Configuration;
+
+public static class NewtomsoftConfiguration
 {
-    public static class NewtomsoftConfiguration
+    private const string DefaultEnvironmentDevelopmentValue = "Development";
+
+    public const string ConsoleOutput = "Console";
+    public const string JsonconsoleOutput = "JsonConsole";
+    public const string DebugOutput = "Debug";
+
+    public static IConfigurationRoot GetConfiguration(string environment = null, string customConfigFileName = null)
     {
-        private const string DefaultEnvironmentDevelopmentValue = "Development";
+        if (string.IsNullOrEmpty(environment)) environment = DefaultEnvironmentDevelopmentValue;
 
-        public const string ConsoleOutput = "Console";
-        public const string JsonconsoleOutput = "JsonConsole";
-        public const string DebugOutput = "Debug";
+        var builder = new ConfigurationBuilder()
+            .AddJsonFile($"appsettings.{environment}.json", optional: true)
+            .AddJsonFile("appsettings.json", optional: true);
 
-        public static IConfigurationRoot GetConfiguration(string environment = null, string customConfigFileName = null)
-        {
-            if (string.IsNullOrEmpty(environment)) environment = DefaultEnvironmentDevelopmentValue;
+        if (!string.IsNullOrEmpty(customConfigFileName))
+            builder.AddJsonFile(customConfigFileName, optional: false);
 
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile($"appsettings.{environment}.json", optional: true)
-                .AddJsonFile("appsettings.json", optional: true);
+        return builder.Build();
+    }
 
-            if (!string.IsNullOrEmpty(customConfigFileName))
-                builder.AddJsonFile(customConfigFileName, optional: false);
-
-            return builder.Build();
-        }
-
-        public static ILogger GetLogger<T>(params string[] values)
-        {
-            var loggerFactory = LoggerFactory.Create(builder => Array.ForEach(values, value => builder.AddCustom(value)));
-            return loggerFactory.CreateLogger<T>();
-        }
+    public static ILogger GetLogger<T>(params string[] values)
+    {
+        var loggerFactory = LoggerFactory.Create(builder => Array.ForEach(values, value => builder.AddCustom(value)));
+        return loggerFactory.CreateLogger<T>();
     }
 }

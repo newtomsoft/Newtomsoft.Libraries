@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace Newtomsoft.EntityFramework.Exceptions
+namespace Newtomsoft.EntityFramework.Exceptions;
+
+public class ConnectionStringException : Exception
 {
-    public class ConnectionStringException : Exception
+    public ConnectionStringException(string message) : base(message)
     {
-        public ConnectionStringException(string message) : base(message)
-        {
-        }
     }
 }

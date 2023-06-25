@@ -8,106 +8,105 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Newtomsoft.EntityFramework.Tests
+namespace Newtomsoft.EntityFramework.Tests;
+
+public class AddDbContextShould : IClassFixture<FixtureEnvironment>
 {
-    public class AddDbContextShould : IClassFixture<FixtureEnvironment>
+    private const string TestCountryName = "France";
+    private const string Environment = "NewtomsoftEntityFrameworkTestEnvironment";
+    private const string Development = "Development";
+    private ServiceCollection _services;
+    private IConfigurationRoot _configuration;
+
+    #region private methods
+    private void CreateServices()
     {
-        private const string TestCountryName = "France";
-        private const string Environment = "NewtomsoftEntityFrameworkTestEnvironment";
-        private const string Development = "Development";
-        private ServiceCollection _services;
-        private IConfigurationRoot _configuration;
+        System.Environment.SetEnvironmentVariable(Environment, Development, EnvironmentVariableTarget.User);
+        _configuration = GetConfiguration();
+        _services = new ServiceCollection();
+        _services.AddSingleton<IConfiguration>(_configuration);
+    }
 
-        #region private methods
-        private void CreateServices()
+    private static IConfigurationRoot GetConfiguration()
+    {
+        var builder = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.Development.json", optional: true);
+
+        return builder.Build();
+    }
+
+    private static void AddContryToDatabase(GoodDbContext_Development dbContext)
+    {
+        if (dbContext.Countries.Where(c => c.Name == TestCountryName).FirstOrDefault() == null)
         {
-            System.Environment.SetEnvironmentVariable(Environment, Development, EnvironmentVariableTarget.User);
-            _configuration = GetConfiguration();
-            _services = new ServiceCollection();
-            _services.AddSingleton<IConfiguration>(_configuration);
+            dbContext.Countries.Add(new CountryModel(TestCountryName, false));
+            dbContext.SaveChanges();
         }
+    }
+    #endregion
 
-        private static IConfigurationRoot GetConfiguration()
-        {
-            var builder = new ConfigurationBuilder()
-                        .AddJsonFile("appsettings.Development.json", optional: true);
+    [Fact]
+    public void DontGetDbContextWhenDataBaseDontExist()
+    {
+        CreateServices();
+        EntityFrameworkTools<InMemoryDbContext>.AddDbContext(_services, _configuration);
+        var provider = _services.BuildServiceProvider();
+        var dbContext = provider.GetService<NoConnectionStringForThisDbContext>();
+        dbContext.ShouldBeNull();
+    }
 
-            return builder.Build();
-        }
+    [Fact]
+    public void GetDbContextWhenInMemory()
+    {
+        CreateServices();
+        EntityFrameworkTools<InMemoryDbContext>.AddDbContext(_services, _configuration);
+        var provider = _services.BuildServiceProvider();
+        var dbContext = provider.GetService<InMemoryDbContext>();
+        dbContext.ShouldNotBeNull();
+        dbContext.Cities.ShouldNotBeNull();
+        dbContext.Countries.ShouldNotBeNull();
+    }
 
-        private static void AddContryToDatabase(GoodDbContext_Development dbContext)
-        {
-            if (dbContext.Countries.Where(c => c.Name == TestCountryName).FirstOrDefault() == null)
-            {
-                dbContext.Countries.Add(new CountryModel(TestCountryName, false));
-                dbContext.SaveChanges();
-            }
-        }
-        #endregion
+    [Fact]
+    public void GetDbContextWhenDataBaseExist()
+    {
+        CreateServices();
+        EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(_services, _configuration);
+        var provider = _services.BuildServiceProvider();
+        var dbContext = provider.GetService<GoodDbContext_Development>();
+        dbContext.ShouldNotBeNull();
+        dbContext.Cities.ShouldNotBeNull();
+        dbContext.Countries.ShouldNotBeNull();
+    }
 
-        [Fact]
-        public void DontGetDbContextWhenDataBaseDontExist()
-        {
-            CreateServices();
-            EntityFrameworkTools<InMemoryDbContext>.AddDbContext(_services, _configuration);
-            var provider = _services.BuildServiceProvider();
-            var dbContext = provider.GetService<NoConnectionStringForThisDbContext>();
-            dbContext.ShouldBeNull();
-        }
+    /// <summary>
+    /// To pass theses tests successfully please copy 
+    /// </summary>
+    [Fact]
+    public void GetDbContextWithNoCityWhenDataBaseExistAndCitiesNoFilled()
+    {
+        CreateServices();
+        EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(_services, _configuration);
+        var provider = _services.BuildServiceProvider();
+        var dbContext = provider.GetService<GoodDbContext_Development>();
+        dbContext.ShouldNotBeNull();
+        dbContext.Cities.ShouldNotBeNull();
+        dbContext.Cities.ToList().Count.ShouldBe(0);
+    }
 
-        [Fact]
-        public void GetDbContextWhenInMemory()
-        {
-            CreateServices();
-            EntityFrameworkTools<InMemoryDbContext>.AddDbContext(_services, _configuration);
-            var provider = _services.BuildServiceProvider();
-            var dbContext = provider.GetService<InMemoryDbContext>();
-            dbContext.ShouldNotBeNull();
-            dbContext.Cities.ShouldNotBeNull();
-            dbContext.Countries.ShouldNotBeNull();
-        }
-
-        [Fact]
-        public void GetDbContextWhenDataBaseExist()
-        {
-            CreateServices();
-            EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(_services, _configuration);
-            var provider = _services.BuildServiceProvider();
-            var dbContext = provider.GetService<GoodDbContext_Development>();
-            dbContext.ShouldNotBeNull();
-            dbContext.Cities.ShouldNotBeNull();
-            dbContext.Countries.ShouldNotBeNull();
-        }
-
-        /// <summary>
-        /// To pass theses tests successfully please copy 
-        /// </summary>
-        [Fact]
-        public void GetDbContextWithNoCityWhenDataBaseExistAndCitiesNoFilled()
-        {
-            CreateServices();
-            EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(_services, _configuration);
-            var provider = _services.BuildServiceProvider();
-            var dbContext = provider.GetService<GoodDbContext_Development>();
-            dbContext.ShouldNotBeNull();
-            dbContext.Cities.ShouldNotBeNull();
-            dbContext.Cities.ToList().Count.ShouldBe(0);
-        }
-
-        [Fact]
-        public void GetDbContextWith1CountryWhenDataBaseExistAnd1CountryAdd()
-        {
-            CreateServices();
-            EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(_services, _configuration);
-            var provider = _services.BuildServiceProvider();
-            var dbContext = provider.GetService<GoodDbContext_Development>();
-            dbContext.ShouldNotBeNull();
-            AddContryToDatabase(dbContext);
-            dbContext.Countries.ShouldNotBeNull();
-            var countries = dbContext.Countries.ToList();
-            countries.Count.ShouldBe(1);
-            countries[0].Name.ShouldBe(TestCountryName);
-            countries[0].IsDemocracy.ShouldBeFalse();
-        }
+    [Fact]
+    public void GetDbContextWith1CountryWhenDataBaseExistAnd1CountryAdd()
+    {
+        CreateServices();
+        EntityFrameworkTools<GoodDbContext_Development>.AddDbContext(_services, _configuration);
+        var provider = _services.BuildServiceProvider();
+        var dbContext = provider.GetService<GoodDbContext_Development>();
+        dbContext.ShouldNotBeNull();
+        AddContryToDatabase(dbContext);
+        dbContext.Countries.ShouldNotBeNull();
+        var countries = dbContext.Countries.ToList();
+        countries.Count.ShouldBe(1);
+        countries[0].Name.ShouldBe(TestCountryName);
+        countries[0].IsDemocracy.ShouldBeFalse();
     }
 }
