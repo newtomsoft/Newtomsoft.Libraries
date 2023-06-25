@@ -1,13 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Newtomsoft.EntityFramework.Tests.Models;
 
 namespace Newtomsoft.EntityFramework.Tests.DbContexts;
 
 public class NoConnectionStringForThisDbContext : DbContext
 {
-    public DbSet<CountryModel> Countries { get; set; }
-    public DbSet<CityModel> Cities { get; set; }
-
     public NoConnectionStringForThisDbContext(DbContextOptions<NoConnectionStringForThisDbContext> options) : base(options)
     {
         // Method intentionally left empty.
